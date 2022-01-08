@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -31,6 +32,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // @json($object)
         //
+        // @param object $object            El objeto a representar como json
+        //
+        // Representa un objeto en forma de json
+        Blade::directive('json', function ($object) {
+            return "<?php
+                echo htmlentities(json_encode($object));
+            ?>";
+        });
     }
 }
