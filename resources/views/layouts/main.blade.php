@@ -14,11 +14,11 @@
 </head>
 
 <body>
-    <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+    <header>
+        <nav class="navbar navbar-dark bg-dark shadow-sm navbar-expand-md">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
+                    {{ config('app.name') }}
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -27,18 +27,20 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav me-auto">
+                    {{-- Left Side Of Navbar --}}
+                    <ul class="navbar-nav me-auto"></ul>
 
-                    </ul>
-
-                    <!-- Right Side Of Navbar -->
+                    {{-- Right Side Of Navbar --}}
                     <ul class="navbar-nav ms-auto">
-                        <!-- Authentication Links -->
+
+                        {{-- invitado --}}
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                    <a class="nav-link" href="{{ route('login') }}">
+                                        <i class="fas fa-user-alt"></i>
+                                        {{ __('Login') }}
+                                    </a>
                                 </li>
                             @endif
 
@@ -47,7 +49,26 @@
                                     <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
+
+                            {{-- logueado --}}
                         @else
+
+                            {{-- Fases --}}
+                            <li class="nav-item dropdown">
+                                <a id="phases" class="nav-link dropdown-toggle" href="#" role="button"
+                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    {{ __('Fases') }}
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="phases">
+                                    <a class="dropdown-item" href="{{ route('phases.create') }}">
+                                        {{ __('Crear fase') }}
+                                    </a>
+                                </div>
+                            </li>
+                            {{-- /Fases --}}
+
+                            {{-- usuario --}}
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -55,8 +76,8 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                             document.getElementById('logout-form').submit();">
+                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
 
@@ -66,22 +87,44 @@
                                     </form>
                                 </div>
                             </li>
+                            {{-- /usuario --}}
+
                         @endguest
                     </ul>
                 </div>
             </div>
         </nav>
+    </header>
 
-        <main class="py-4 container">
-            @yield('content')
-        </main>
-    </div>
+    <main class="min-height">
+        @yield('content')
+    </main>
 
     {{-- rutas de ziggy --}}
     @routes
 
-    @include('sections.body.scripts')
-    @yield('scripts')
+    <footer class="text-muted py-5 bg-white">
+        <div class="container">
+            <p class="float-end mb-1">
+                <a href="#" class="text-primary text-decoration-none">
+                    <i class="fas fa-arrow-up"></i> @lang('Subir')
+                </a>
+            </p>
+            <p class="mb-1">
+                @lang('Desarrollado por <a href=":url">:name</a>', [
+                'url' => 'https://project4design.com/',
+                'name' => 'P4D'
+                ])
+            </p>
+            <p class="mb-0">
+                @lang(':name - &copy; Todos los derechos reservados.', [
+                'name' => config('app.name')
+                ])
+            </p>
+        </div>
+    </footer>
 </body>
+@include('sections.body.scripts')
+@yield('scripts')
 
 </html>

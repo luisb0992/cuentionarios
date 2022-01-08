@@ -1,5 +1,7 @@
 {
     "/js/app.js": "/js/app.js",
     "/js/landing/landing.js": "/js/landing/landing.js",
-    "/css/app.css": "/css/app.css"
+    "/js/phases/create.js": "/js/phases/create.js",
+    "/css/app.css": "/css/app.css",
+    "/css/custom.css": "/css/custom.css"
 }

@@ -1,11 +1,11 @@
 <template>
-    <div class="row justify-content-center">
-        <div class="col-md-12">
-            <div class="card border-0">
-                <div class="card-body">
-                    <p class="text-center">{{ video }}</p>
-                </div>
-            </div>
+    <div class="py-2">
+        <div class="ratio ratio-16x9">
+            <iframe
+                src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0"
+                title="YouTube video"
+                allowfullscreen
+            ></iframe>
         </div>
     </div>
 </template>
@@ -16,7 +16,7 @@ export default {
     props: {
         video: {
             type: String,
-            default: 'video',
+            default: "video",
             description: "Video descriptivo de la app en el landing",
         },
     },

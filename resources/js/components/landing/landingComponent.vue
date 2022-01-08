@@ -1,40 +1,29 @@
 <template>
-    <div class="justify-content-center bg-white">
-        <title-component :title="title"></title-component>
-        <video-component :video="video"></video-component>
-
-        <p class="text-center">
-            {{ subtitle }}
-        </p>
-
-        <div class="row justify-content-center mb-5">
-            <div class="col-md-6">
-                <input
-                    type="password"
-                    name="password"
-                    v-model="password"
-                    class="form-control form-control-lg"
-                    :placeholder="passwordPlaceholder"
-                />
-            </div>
-        </div>
+    <div class="bg-white">
+        <heading-component
+            :title="title"
+            :video="video"
+            :subtitle="subtitle"
+            :password-placeholder="passwordPlaceholder"
+        ></heading-component>
 
         <phase-grouping-component :phase="phase"></phase-grouping-component>
     </div>
 </template>
 
 <script>
-// Imports necesarios para el landing
-import TitleComponent from "./TitleComponent";
-import VideoComponent from "./VideoComponent";
+
+// Sección para la fase y su información
 import PhaseGroupingComponent from "./PhaseGroupingComponent";
+
+// Sección para el título, video y texto de la app
+import HeadingComponent from "./HeadingComponent";
 
 export default {
     name: "Landing",
     components: {
-        TitleComponent,
-        VideoComponent,
-        PhaseGroupingComponent
+        HeadingComponent,
+        PhaseGroupingComponent,
     },
     props: {
         title: {
@@ -54,17 +43,13 @@ export default {
         },
         passwordPlaceholder: {
             type: String,
-            default: "---",
+            default: "**********",
             description: "Placeholder para el input tipo password",
         },
         phase: {
-            description: "Fase con su respectiva información (videos y cuestionarios)",
-        }
-    },
-    data() {
-        return {
-            password: null,
-        };
+            description:
+                "Fase con su respectiva información (videos y cuestionarios)",
+        },
     },
 };
 </script>

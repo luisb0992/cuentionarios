@@ -3,10 +3,11 @@ BD:
 phases:
 
 id
+user_id
 title
 number
 
-videosphase:
+videos_phase:
 
 id
 phase_id
@@ -15,15 +16,26 @@ url
 size
 name
 
-phasequestions:
+------------------------
+cuestionario:
+------------------------
 
+phase_questions:
 id
 phase_id
 question
 is_active
 
-phaseanswers:
-
+phase_answers:
+id
 phase_question_id
 answer
 is_active
+is_correct
+
+user_phase_answers:
+id
+user_id
+phase_id
+phase_question_id
+phase_answers_id

@@ -1,13 +1,5 @@
 <template>
-    <div class="row justify-content-center">
-        <div class="col-md-12">
-            <div class="card border-0">
-                <div class="card-body">
-                    <h1 class="text-center">{{ title }}</h1>
-                </div>
-            </div>
-        </div>
-    </div>
+    <h1 class="fw-light">{{ title }}</h1>
 </template>
 
 <script>
@@ -16,7 +8,7 @@ export default {
     props: {
         title: {
             type: String,
-            default: 'Título',
+            default: "Título",
             description: "Título de la app en el landing",
         },
     },
