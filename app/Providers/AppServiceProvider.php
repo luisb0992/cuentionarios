@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Pagination\Paginator;
+use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
@@ -23,6 +24,11 @@ class AppServiceProvider extends ServiceProvider
 
         // Usa los estilos CSS de Bootstrap para el paginador
         Paginator::useBootstrap();
+
+        // heroku
+        if (env('REDIRECT_HTTPS')) {
+            $this->app['request']->server->set('HTTPS', true);
+        }
     }
 
     /**
@@ -30,7 +36,22 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(UrlGenerator $url)
+    {
+        $this->bladeDirectives();
+
+        // heroku
+        if (env('REDIRECT_HTTPS')) {
+            $url->formatScheme('https://');
+        }
+    }
+
+    /**
+     * Directivas para blade
+     *
+     * @return void
+     */
+    public function bladeDirectives(): void
     {
         // @json($object)
         //
