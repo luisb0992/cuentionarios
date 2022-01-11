@@ -2,10 +2,35 @@
 
 @section('subtitle', 'Crear fase')
 
-@section('content')
-    <div id="app">
+@section('css')
+    {{-- aplicar para usar bootstrap vue --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+        integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+@stop
 
-        <div class="container py-4 bg-white">
+@section('content')
+    <div id="app" v-cloak class="bg-light">
+
+        {{-- texto para labels --}}
+        <div class="d-none" id="textLabels" data-title="@lang('Título')" data-phase="@lang('Fase a crear')"
+            data-number="{{ $lastPhaseNumber }}" data-submit="@lang('Agregar nueva fase')"
+            data-selected-videos="@lang('Archivos seleccionados')" data-name-files="@lang('Archivos seleccionados')"
+            data-add-files="@lang('Agregar archivos')" data-select-method="@lang('Seleccione el método')"
+            data-via-file="@lang('Vía subida de archivos')" data-via-url="@lang('Vía URL')"
+            data-add-input-url="@lang('Agregar URL')" data-upload-files="@lang('Videos cargados')"
+            data-video-name="@lang('Nombre')" data-video-type="@lang('Tipo')" data-video-size="@lang('Tamaño')"
+            data-video-via="@lang('Vía')" data-video-actions="@lang('Acciones')"
+            data-no-load-videos="@lang('Ningún video cargado')" data-delete-button="@lang('Eliminar')"
+            data-load-videos-button="@lang('Cargar videos')" data-url="@lang('URL')" data-upload="@lang('Archivo')"></div>
+        {{-- /texto para labels --}}
+
+        {{-- placeholders --}}
+        <div class="d-none" id="textPlaceholders" data-title="@lang('Título para la fase')"
+            data-videos="@lang('Seleccionar archivos...')" data-drop="@lang('Arrastrar elementos...')"
+            data-browse-input="@lang('Buscar')"></div>
+        {{-- /placeholders --}}
+
+        <div class="container py-4">
             <h2 class="text-muted">@lang('Crear nueva fase')</h2>
             <div class="py-2">
                 <a class="btn btn-outline-danger btn-lg" href="{{ route('phases.index') }}" role="button">
@@ -16,33 +41,7 @@
             <hr>
             <div class="card text-dark">
                 <div class="card-body">
-                    <form action="" method="post">
-                        @csrf
-                        <div class="form-group">
-                            <label for="name">@lang('Nombre de la fase')</label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="@lang('Nombre de la fase')">
-                        </div>
-                        <div class="form-group">
-                            <label for="description">@lang('Descripción de la fase')</label>
-                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="@lang('Descripción de la fase')"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="start_date">@lang('Fecha de inicio')</label>
-                            <input type="date" class="form-control" id="start_date" name="start_date" placeholder="@lang('Fecha de inicio')">
-                        </div>
-                        <div class="form-group">
-                            <label for="end_date">@lang('Fecha de fin')</label>
-                            <input type="date" class="form-control" id="end_date" name="end_date" placeholder="@lang('Fecha de fin')">
-                        </div>
-                        <div class="form-group">
-                            <label for="status">@lang('Estado de la fase')</label>
-                            <select class="form-control" id="status" name="status">
-                                <option value="1">@lang('Activa')</option>
-                                <option value="0">@lang('Inactiva')</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">@lang('Crear fase')</button>
-                    </form>
+                    <form-component></form-component>
                 </div>
             </div>
         </div>
