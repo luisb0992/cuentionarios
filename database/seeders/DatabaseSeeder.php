@@ -40,13 +40,17 @@ class DatabaseSeeder extends Seeder
     public function truncateTables(array $tables): void
     {
         // desactivar la revisión de claves foráneas
-        DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
+        if (!env('APP_ENV') === 'production') {
+            DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
+        }
 
         foreach ($tables as $table) {
             DB::table($table)->truncate();
         }
 
         // activar la revisión de claves foráneas
-        DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
+        if (!env('APP_ENV') === 'production') {
+            DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
+        }
     }
 }
