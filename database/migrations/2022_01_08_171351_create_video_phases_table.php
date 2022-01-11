@@ -24,7 +24,7 @@ class CreateVideoPhasesTable extends Migration
         });
 
         // agregar atributo data MEDIUMBLOB
-        DB::statement("ALTER TABLE video_phases ADD data MEDIUMBLOB AFTER url");
+        DB::statement("ALTER TABLE video_phases ADD data MEDIUMBLOB");
     }
 
     /**
