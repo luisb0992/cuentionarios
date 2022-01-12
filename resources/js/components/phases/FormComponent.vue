@@ -1,6 +1,7 @@
 <template>
     <div>
         <form @submit.prevent="createPhase()">
+            <!-- numero de la fase -->
             <div class="form-group py-2">
                 <i class="fas fa-list-alt"></i>
                 <label for="phase">{{ labels.phase }}</label>
@@ -12,6 +13,9 @@
                     disabled
                 />
             </div>
+            <!-- /numero de la fase -->
+
+            <!-- titulo de la fase -->
             <div class="form-group py-2">
                 <i class="fas fa-heading"></i>
                 <label for="title">{{ labels.title }}</label>
@@ -23,12 +27,17 @@
                     v-model="form.title"
                 />
             </div>
+            <!-- /titulo de la fase -->
+
+            <!-- carga de videos -->
             <div class="form-group py-2">
                 <i class="fas fa-file-video"></i>
                 <label for="addFiles">{{ labels.addFiles }}</label>
                 <p class="lead">
                     <small>{{ labels.selectMethod }}</small>
                 </p>
+
+                <!-- botones para seleccionar por subida o url -->
                 <div>
                     <button
                         type="button"
@@ -47,6 +56,7 @@
                         {{ labels.viaUrl }}
                     </button>
                 </div>
+                <!-- /botones para seleccionar por subida o url -->
 
                 <!-- videos subidos -->
                 <div v-if="isFiles" class="mt-2">
@@ -57,18 +67,27 @@
                         :drop-placeholder="placeholders.drop"
                         :browse-text="placeholders.browseInput"
                         multiple
-                        accept=".mp4, .mov, .avi"
+                        accept=".mp4, .flv, .avi"
                         size="lg"
                         :file-name-formatter="formatNames"
+                        @input="checkVideoFile()"
                     ></b-form-file>
-                    <div v-if="videosFile.length" class="mt-1">
-                        <div>{{ labels.selectedVideos }}</div>
-                        <div
-                            class="text-muted"
-                            v-for="(video, index) in videosFile"
-                            :key="index"
-                        >
-                            <small>{{ video.name }}</small>
+                    <div
+                        class="row align-items-center mt-3"
+                        v-for="(video, index) in videosFile"
+                        :key="index"
+                    >
+                        <div class="col-md-3">
+                            <video
+                                :src="video.preview"
+                                controls
+                                class="col-md-12"
+                            ></video>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="text-primary">{{ video.name }}</div>
+                            <div class="text-muted">{{ video.type }}</div>
+                            <div class="text-muted">{{ video.sizeMB }} MB</div>
                         </div>
                     </div>
                 </div>
@@ -127,6 +146,8 @@
                 </div>
                 <!-- /videos cargados por url -->
                 <hr />
+
+                <!-- botón para cargar videos en la tabla -->
                 <div>
                     <button
                         type="button"
@@ -137,7 +158,9 @@
                         {{ labels.loadVideosButton }}
                     </button>
                 </div>
+                <!-- /botón para cargar videos en la tabla -->
             </div>
+            <!-- /carga de videos -->
 
             <!-- tabla de videos cargados por url o upload -->
             <div class="form-group py-2">
@@ -156,11 +179,7 @@
                         <tbody>
                             <tr v-if="!videos.length">
                                 <td colspan="5">
-                                    <div class="alert alert-info" role="alert">
-                                        <strong>{{
-                                            labels.noLoadVideos
-                                        }}</strong>
-                                    </div>
+                                    <strong>{{ labels.noLoadVideos }}</strong>
                                 </td>
                             </tr>
                             <tr
@@ -170,7 +189,11 @@
                             >
                                 <td>{{ video.name }}</td>
                                 <td>{{ video.type }}</td>
-                                <td>{{ video.size }}</td>
+                                <td>
+                                    {{
+                                        video.sizeMB ? video.sizeMB + "MB" : ""
+                                    }}
+                                </td>
                                 <td>
                                     <b-badge
                                         :variant="
@@ -190,7 +213,7 @@
                                     <button
                                         type="button"
                                         class="btn btn-danger"
-                                        @click="deleteVideo(index)"
+                                        @click="deleteVideoToTable(index)"
                                     >
                                         <i class="fas fa-times"></i>
                                     </button>
@@ -200,12 +223,16 @@
                     </table>
                 </div>
             </div>
+            <!-- /tabla de videos cargados por url o upload -->
+
+            <!-- submit del formulario -->
             <div class="py-2 text-right">
                 <button type="submit" class="btn btn-outline-primary btn-lg">
                     <i class="fas fa-save"></i>
                     {{ labels.submit }}
                 </button>
             </div>
+            <!-- /submit del formulario -->
         </form>
     </div>
 </template>
@@ -244,6 +271,9 @@ export default {
             // Videos cargados en la tabla
             videos: [],
 
+            // mensajes de la app
+            appMessages: [],
+
             // si se selecciono subida por archivos
             isFiles: false,
 
@@ -264,6 +294,9 @@ export default {
 
         // tomar los textos para los placeholders del formulario
         this.placeholders = document.querySelector("#textPlaceholders").dataset;
+
+        // cargar mensajes de la app a la propiedad
+        this.appMessages = document.querySelector("#appMessages").dataset;
     },
 
     methods: {
@@ -297,19 +330,65 @@ export default {
          */
         addUrlInput() {
             this.videosUrl.push({
-                url: null,
+                url: "",
             });
         },
 
         /**
-         * evaluar si la url es valida
+         * Limpiar el array de videos por url
          */
-        evaluateUrl(index) {
-            if (this.videosUrl[index].url.length > 0) {
-                console.log(
-                    "se esta escribiendo algo",
-                    this.videosUrl[index].url
-                );
+        clearUrlVIdeos() {
+            this.videosUrl = [
+                {
+                    url: "",
+                },
+            ];
+        },
+
+        /**
+         * Limpiar el array de videos subidos
+         */
+        clearUploadVideos() {
+            this.videosFile = [];
+        },
+
+        /**
+         * evaluar si el archivo subido es un video valido
+         */
+        isValidFileVideo(file) {
+            const videoTypes = ["video/mp4", "video/x-msvideo", "video/x-flv"];
+            return file && videoTypes.includes(file["type"]);
+        },
+
+        /**
+         * evaluar si el o los archivos seleccionados son validos
+         */
+        checkVideoFile() {
+            // prevenir cualquier error
+            if (!this.videosFile.length) {
+                return;
+            }
+
+            let continuar = true;
+
+            // Comprueba si es un archivo de video aceptado
+            // sino se muestra el mensaje
+            this.videosFile.forEach((file) => {
+                if (!this.isValidFileVideo(file) && continuar) {
+                    continuar = false;
+                }
+
+                // precargar el video para previsualizar
+                if (continuar) {
+                    file.preview = URL.createObjectURL(file);
+                    file.sizeMB = parseFloat(file.size / 1048576).toFixed(2);
+                }
+            });
+
+            // Si no ha pasado la validación, se muestra el mensaje
+            if (!continuar) {
+                this.clearUploadVideos();
+                this.$toast.error(this.appMessages.invalidUploadFiles);
             }
         },
 
@@ -321,9 +400,28 @@ export default {
         },
 
         /**
+         * eliminar un video de la tabla
+         */
+        deleteVideoToTable(index) {
+            this.videos.splice(index, 1);
+            this.$toast.info(this.appMessages.deleteVideo);
+        },
+
+        /**
          * Agregar o cargar videos a la tabla
          */
         loadVideosToTable() {
+            const notUrlVideo = this.videosUrl.every(
+                (video) => !video.url.length
+            );
+            const notUploadVideo = !this.videosFile.length;
+
+            // verificar que las urls sean validas
+            if (notUrlVideo && notUploadVideo) {
+                this.$toast.warning(this.appMessages.emptyVideos);
+                return;
+            }
+
             if (this.isUrl) {
                 this.videosUrl.forEach((video) => {
                     if (video.url.length > 5) {
@@ -331,29 +429,70 @@ export default {
                             name: video.url,
                             type: null,
                             size: null,
+                            sizeMB: null,
                             via: this.TYPE_UPLOAD.url,
                         });
-                    } else {
-                        console.log("no se puede agregar el video");
-                        return;
                     }
+                });
+            } else {
+                this.videosFile.forEach((video) => {
+                    this.videos.push({
+                        name: video.name,
+                        type: video.type,
+                        size: video.size,
+                        sizeMB: video.sizeMB,
+                        via: this.TYPE_UPLOAD.file,
+                    });
                 });
             }
 
             // limpiar array de videos por url
-            this.videosUrl = [{url: null}];
+            this.clearUrlVIdeos();
 
             // limpiar array de videos por archivos
-            this.videosFile = [];
+            this.clearUploadVideos();
         },
 
+        /**
+         * Guardar los datos y crear la nueva fase
+         */
         createPhase() {
-            // crear la fase
-            // this.$store.dispatch('createPhase', this.form);
-            // // limpiar el formulario
-            // this.form = {
-            //     title: '',
-            // };
+            // verificar que existan videos agregados
+            if (!this.videos.length) {
+                this.$toast.warning(this.appMessages.requiredVideos);
+                return;
+            }
+
+            if (!this.form.title.length) {
+                this.$toast.warning(this.appMessages.requiredTitle);
+                return;
+            }
+
+            let loader = this.$loading.show();
+
+            let formData = new FormData();
+            formData.append("title", this.form.title);
+
+            this.videos.map((video) => {
+                console.log(video);
+                formData.append("videos[]", JSON.stringify(video));
+            });
+
+            axios
+                .post(route("phases.store"), formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                })
+                .then((response) => {
+                    this.$toast.success(this.appMessages.successPhase);
+                })
+                .catch((error) => {
+                    this.$toast.error(this.appMessages.errorPhase);
+                })
+                .finally(() => {
+                    loader.hide();
+                });
         },
     },
 };
