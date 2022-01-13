@@ -20,12 +20,16 @@ class CreateVideoPhasesTable extends Migration
             $table->text('name')->nullable();
             $table->integer('size')->nullable();
             $table->string('url')->nullable();
-            $table->binary('data');
+            // $table->binary('data');
             $table->timestamps();
         });
 
         // agregar atributo data MEDIUMBLOB
-        // DB::statement("ALTER TABLE video_phases ADD data MEDIUMBLOB AFTER url");
+        if (env('DB_CONNECTION') === 'mysql') {
+            DB::statement("ALTER TABLE video_phases ADD data MEDIUMBLOB AFTER url");
+        } elseif (env('DB_CONNECTION') === 'pgsql') {
+            DB::statement("ALTER TABLE video_phases ADD data BYTEA AFTER url");
+        }
     }
 
     /**

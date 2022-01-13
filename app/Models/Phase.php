@@ -43,7 +43,7 @@ class Phase extends Model
      */
     public function videos(): HasMany
     {
-        return $this->HasMany(VideoPhase::class, 'video_phases_id');
+        return $this->HasMany(VideoPhase::class, 'phase_id');
     }
 
     /**

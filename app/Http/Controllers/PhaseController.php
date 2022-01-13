@@ -1,13 +1,33 @@
 <?php
 
+/**
+ * Gestiona las fases junto a su estructura de videos,  cuestionarios, etc
+ *
+ * @author luisbardev <luisbardev@gmail.com> <luisbardev.com>
+ * @copyright 2021 P4D http://www.p4d.com
+ */
+
 namespace App\Http\Controllers;
 
+// modelos
 use App\Models\Phase;
+
+// traits
+use App\Http\Controllers\Traits\VideoPhaseTrait;
+
+// extras
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Lang;
 
 class PhaseController extends Controller
 {
+
+    use VideoPhaseTrait;
+
     /**
      * Devuelve la vista con el listado de fases.
      *
@@ -38,12 +58,47 @@ class PhaseController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(): JsonResponse
     {
-        dd(
-            $request->all(),
-            $request->videos
-        );
+        $data = request()->all();
+        $fileVideos = $data['videos']['file'] ?? [];
+        $urlVideos = $data['videos']['url'] ?? [];
+
+        // videos base 64
+        $files = $this->getBase64Video($fileVideos);
+
+        // videos por URL
+        $urls = $this->getUrlVideo($urlVideos);
+
+        // videos a guardar en la base de datos
+        $videos = $this->getVideos($files, $urls);
+
+        // datos de la phase
+        $phase = [
+            'user_id'   => Auth::id(),
+            'title'     => $data['title'],
+            'number'    => Phase::lastPhaseNumber()
+        ];
+
+        $id = DB::transaction(function () use ($phase, $videos) {
+
+            $phaseCreated = Phase::create($phase);
+
+            $phaseCreated->videos()->createMany($videos);
+
+            return $phaseCreated->id;
+        });
+
+        if ($id) {
+            return response()->json([
+                'message' => Lang::get('La fase se ha creado correctamente.'),
+                'id' => $id,
+            ], 201);
+        } else {
+            return response()->json([
+                'message' => Lang::get('Ha ocurrido un error al crear la fase.'),
+            ], 500);
+        }
     }
 
     /**

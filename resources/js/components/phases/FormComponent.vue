@@ -62,7 +62,6 @@
                 <div v-if="isFiles" class="mt-2">
                     <b-form-file
                         v-model="videosFile"
-                        :state="Boolean(videosFile)"
                         :placeholder="placeholders.videos"
                         :drop-placeholder="placeholders.drop"
                         :browse-text="placeholders.browseInput"
@@ -163,12 +162,16 @@
             <!-- /carga de videos -->
 
             <!-- tabla de videos cargados por url o upload -->
-            <div class="form-group py-2">
-                <label for="uploadFiles">{{ labels.uploadFiles }}</label>
+            <div class="form-group py-2 shadow">
+                <label for="uploadFiles">
+                    <i class="fas fa-table"></i>
+                    {{ labels.uploadFiles }}
+                </label>
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover table-light">
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th>{{ labels.videoName }}</th>
                                 <th>{{ labels.videoType }}</th>
                                 <th>{{ labels.videoSize }}</th>
@@ -178,7 +181,7 @@
                         </thead>
                         <tbody>
                             <tr v-if="!videos.length">
-                                <td colspan="5">
+                                <td colspan="6">
                                     <strong>{{ labels.noLoadVideos }}</strong>
                                 </td>
                             </tr>
@@ -187,6 +190,7 @@
                                 :key="index"
                                 v-else
                             >
+                                <td>{{ index + 1 }}</td>
                                 <td>{{ video.name }}</td>
                                 <td>{{ video.type }}</td>
                                 <td>
@@ -353,6 +357,15 @@ export default {
         },
 
         /**
+         * Limpiar el formulario
+         */
+        clearForm() {
+            this.form = {
+                title: "",
+            };
+        },
+
+        /**
          * evaluar si el archivo subido es un video valido
          */
         isValidFileVideo(file) {
@@ -431,6 +444,7 @@ export default {
                             size: null,
                             sizeMB: null,
                             via: this.TYPE_UPLOAD.url,
+                            url: video.url,
                         });
                     }
                 });
@@ -442,6 +456,7 @@ export default {
                         size: video.size,
                         sizeMB: video.sizeMB,
                         via: this.TYPE_UPLOAD.file,
+                        video: video,
                     });
                 });
             }
@@ -454,6 +469,24 @@ export default {
         },
 
         /**
+         * Obtener los datos formateados del formulario
+         */
+        getFormData() {
+            const formData = new FormData();
+            formData.append("title", this.form.title);
+
+            this.videos.forEach((video, index) => {
+                if (video.via === this.TYPE_UPLOAD.file) {
+                    formData.append(`videos[file][${index}]`, video.video);
+                } else {
+                    formData.append(`videos[url][${index}]`, video.url);
+                }
+            });
+
+            return formData;
+        },
+
+        /**
          * Guardar los datos y crear la nueva fase
          */
         createPhase() {
@@ -463,20 +496,17 @@ export default {
                 return;
             }
 
+            // verificar el título
             if (!this.form.title.length) {
                 this.$toast.warning(this.appMessages.requiredTitle);
                 return;
             }
 
+            // formatear la data
+            const formData = this.getFormData();
+
+            // iniciar el loader
             let loader = this.$loading.show();
-
-            let formData = new FormData();
-            formData.append("title", this.form.title);
-
-            this.videos.map((video) => {
-                console.log(video);
-                formData.append("videos[]", JSON.stringify(video));
-            });
 
             axios
                 .post(route("phases.store"), formData, {
@@ -485,9 +515,16 @@ export default {
                     },
                 })
                 .then((response) => {
-                    this.$toast.success(this.appMessages.successPhase);
+                    if (response.status === 201) {
+                        this.videos = [];
+                        this.clearForm();
+                        this.clearUrlVIdeos();
+                        this.clearUploadVideos();
+                        this.$toast.success(response.data.message);
+                    }
                 })
                 .catch((error) => {
+                    console.log(error);
                     this.$toast.error(this.appMessages.errorPhase);
                 })
                 .finally(() => {
