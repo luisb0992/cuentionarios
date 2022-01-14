@@ -35,9 +35,19 @@ class PhaseController extends Controller
      */
     public function index(): View
     {
-        $phases = Phase::all();
+        return view('phases.index');
+    }
 
-        return view('phases.index', compact('phases'));
+    /**
+     * Devuelve las fases en un objeto json.
+     *
+     * @return JsonResponse
+     */
+    public function getPhases(): JsonResponse
+    {
+        $phases = Phase::with('videos')->get();
+
+        return response()->json($phases);
     }
 
     /**
@@ -136,13 +146,17 @@ class PhaseController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Eliminar la fase temporalmente de la tabla
      *
      * @param  \App\Models\Phase  $phase
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function destroy(Phase $phase)
+    public function destroy(Phase $phase): JsonResponse
     {
-        //
+        $phase->delete();
+
+        return response()->json([
+            'message' => Lang::get('La fase se ha eliminado correctamente.'),
+        ], 200);
     }
 }

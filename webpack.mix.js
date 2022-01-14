@@ -11,5 +11,7 @@ mix.copyDirectory("resources/libs", "public/libs");
 // Archivos para el funcionamiento de la landing page
 mix.js("resources/js/landing/landing.js", "public/js/landing").vue();
 
-// Archivos para el funcionamiento de la creación de fases
-mix.js("resources/js/phases/create.js", "public/js/phases").vue();
+// Archivos para el funcionamiento del modulo de fases
+mix.js("resources/js/phases/create.js", "public/js/phases")
+    .js("resources/js/phases/index.js", "public/js/phases")
+    .vue();

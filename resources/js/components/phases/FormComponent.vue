@@ -517,6 +517,7 @@ export default {
                 .then((response) => {
                     if (response.status === 201) {
                         this.videos = [];
+                        this.labels.number = parseInt(this.labels.number) + 1;
                         this.clearForm();
                         this.clearUrlVIdeos();
                         this.clearUploadVideos();

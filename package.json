@@ -25,6 +25,9 @@
     },
     "dependencies": {
         "bootstrap-vue": "^2.21.2",
+        "moment": "^2.29.1",
+        "primeicons": "^5.0.0",
+        "primevue": "^2.8.0",
         "v-video-embed": "^1.0.8",
         "vue-loading-overlay": "^3.4.2",
         "vue-toast-notification": "^0.6.2"

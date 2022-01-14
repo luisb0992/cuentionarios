@@ -3,68 +3,25 @@
 @section('subtitle', 'Fases')
 
 @section('content')
-    <div id="app">
+    <div id="app" v-cloak>
 
-        <div class="container py-4 bg-white">
-            <h2 class="text-muted">@lang('Listado de fases')</h2>
-            <div class="py-2">
-                <a class="btn btn-outline-success btn-lg" href="{{ route('phases.create') }}" role="button">
-                    <i class="fas fa-plus"></i>
-                    @lang('Crear fase')
-                </a>
-            </div>
-            <hr>
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>@lang('Título')</th>
-                            <th>@lang('Fase Nº')</th>
-                            <th>@lang('Videos')</th>
-                            <th>@lang('Acciones')</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($phases as $phase)
-                            <tr>
-                                <td>{{ $phase->title }}</td>
-                                <td>{{ $phase->number }}</td>
-                                <td>{{ $phase->totalVideos() }}</td>
-                                <td>
-                                    <a class="btn btn-outline-primary btn-sm" href="{{ route('phases.show', $phase->id) }}" role="button">
-                                        <i class="fas fa-eye"></i>
-                                        @lang('Ver')
-                                    </a>
-                                    <a class="btn btn-outline-warning btn-sm" href="{{ route('phases.edit', $phase->id) }}" role="button">
-                                        <i class="fas fa-edit"></i>
-                                        @lang('Editar')
-                                    </a>
-                                    {{--  <form action="{{ route('phases.destroy', $phase->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-outline-danger btn-sm" type="submit">
-                                            <i class="fas fa-trash-alt"></i>
-                                            @lang('Eliminar')
-                                        </button>
-                                    </form>  --}}
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4">
-                                    <div class="alert alert-info" role="alert">
-                                        @lang('No hay fases creadas')
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+        <div class="d-none" id="labels" data-phase="@lang('Listado de fases')"
+            data-create-phase="@lang('Crear fase')" data-search="@lang('Buscar...')"
+            data-not-found="@lang('Elemento no encontrado')" data-loading="@lang('Buscando, por favor espere...')"
+            data-showing="@lang('Mostrando')" data-to="@lang('a')" data-of="@lang('de')" data-entries="@lang('entradas')"
+            data-title="@lang('Título')" data-number="@lang('Número')" data-videos="@lang('Videos')"
+            data-created="@lang('Creado')" data-updated="@lang('Ultima actualización')" data-actions="@lang('Acciones')"
+            data-tooltip-edit="@lang('Editar')" data-tooltip-delete="@lang('Eliminar')" data-tooltip-show="@lang('Mostrar')"
+            data-confirmation-title="@lang('Confirmación')" data-confirmation-text="@lang('¿Está seguro que desea eliminar la fase?')"
+            data-no="@lang('No')" data-yes="@lang('Sí')" data-cancel="@lang('Cancelar')" data-ok="@lang('Aceptar')"
+            ></div>
+
+        <div class="container my-4 bg-white">
+            <index-component></index-component>
         </div>
     </div>
 @stop
 
 @section('scripts')
-    {{-- <script src="{{ mix('js/landing/landing.js') }}"></script> --}}
+    <script src="{{ mix('js/phases/index.js') }}"></script>
 @stop

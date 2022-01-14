@@ -27,4 +27,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     // Rutas para la gestión de fases
     Route::resource('phases', PhaseController::class);
+
+    // Obtener las faces por medio de un objeto json
+    Route::get('/getphases', [PhaseController::class, 'getPhases'])->name('phases.getPhases');
 });

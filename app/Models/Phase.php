@@ -5,9 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Phase extends Model
 {
+
+    use SoftDeletes;
+
     /**
      * La tabla asociada al modelo
      *
@@ -65,7 +69,7 @@ class Phase extends Model
     public static function lastPhaseNumber(): int
     {
         if (self::count() > 0) {
-            return self::latest()->first()->number;
+            return self::latest()->first()->number + 1;
         } else {
             return 1;
         }
