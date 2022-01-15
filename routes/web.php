@@ -30,4 +30,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     // Obtener las faces por medio de un objeto json
     Route::get('/getphases', [PhaseController::class, 'getPhases'])->name('phases.getPhases');
+
+
+    Route::post('/deleteselectedphases', [PhaseController::class, 'destroySelected'])->name('phases.destroySelected');
 });

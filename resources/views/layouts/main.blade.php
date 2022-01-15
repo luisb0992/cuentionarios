@@ -61,6 +61,9 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="phases">
+                                    <a class="dropdown-item" href="{{ route('phases.index') }}">
+                                        {{ __('Listado de fases') }}
+                                    </a>
                                     <a class="dropdown-item" href="{{ route('phases.create') }}">
                                         {{ __('Crear fase') }}
                                     </a>

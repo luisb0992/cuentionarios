@@ -159,4 +159,25 @@ class PhaseController extends Controller
             'message' => Lang::get('La fase se ha eliminado correctamente.'),
         ], 200);
     }
+
+    /**
+     * Eliminar las fases seleccionadas de la tabla
+     *
+     * @return Response
+     */
+    public function destroySelected(): JsonResponse
+    {
+        // ids recibidos
+        $ids = request()->all();
+
+        // fases encontradas
+        $phases = Phase::whereIn('id', $ids)->get();
+
+        // eliminar las fases
+        $phases->each(fn ($phase) => $phase->delete());
+
+        return response()->json([
+            'message' => Lang::get('Las fases seleccionadas se han eliminado correctamente.'),
+        ], 200);
+    }
 }

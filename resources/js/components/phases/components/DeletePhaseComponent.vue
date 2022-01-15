@@ -6,10 +6,7 @@
         :modal="true"
     >
         <div class="confirmation-content">
-            <i
-                class="pi pi-exclamation-triangle p-mr-3"
-                style="font-size: 2rem"
-            />
+            <i class="fas fa-exclamation-triangle" />
             <span>{{ labels.confirmationText }}</span>
         </div>
         <template #footer>
@@ -22,7 +19,7 @@
             <Button
                 :label="labels.yes"
                 icon="pi pi-check"
-                @click="$emit('delete-phase')"
+                @click="$emit('confirm-delete-process')"
                 class="p-button-success p-button-raised"
                 autofocus
             />
@@ -39,16 +36,13 @@ export default {
     name: "Deletephasecomponent",
     components: {
         Dialog,
-        Button
+        Button,
     },
     props: {
         labels: {
             required: true,
         },
         displayDeleteConfirmation: {
-            required: true,
-        },
-        selectedPhase: {
             required: true,
         },
     },

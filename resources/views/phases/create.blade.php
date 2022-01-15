@@ -16,14 +16,13 @@
         {{--  /textos necesarios para vue  --}}
 
         <div class="container py-4">
-            <h2 class="text-muted">@lang('Crear nueva fase')</h2>
             <div class="py-2">
-                <a class="btn btn-outline-danger btn-lg" href="{{ route('phases.index') }}" role="button">
+                <a class="btn btn-outline-danger" href="{{ route('phases.index') }}" role="button">
                     <i class="fas fa-arrow-left"></i>
                     @lang('Volver al listado de fases')
                 </a>
             </div>
-            <hr>
+            <h2 class="text-muted">@lang('Crear nueva fase')</h2>
             <div class="card text-dark">
                 <div class="card-body">
                     <form-component></form-component>

@@ -1,17 +1,35 @@
 <template>
-    <div>
-        <!-- botón para crear nueva fase -->
-        <div class="mb-2">
-            <a
-                class="btn btn-outline-success"
-                :href="getRoutes().create"
-                role="button"
-            >
-                <i class="fas fa-plus"></i>
-                {{ labels.createPhase }}
-            </a>
+    <div class="mt-4">
+        <!-- botones de configuración -->
+        <div
+            class="d-flex flex-row justify-content-between align-items-center bg-light px-3 py-2"
+        >
+            <div>
+                <a :href="getRoutes().create">
+                    <Button
+                        :label="labels.createPhase"
+                        icon="fas fa-plus"
+                        class="p-button-primary p-button-raised"
+                    />
+                </a>
+                <Button
+                    :label="labels.deletePhases"
+                    icon="fas fa-trash"
+                    class="p-button-danger p-button-raised"
+                    @click="confirmDeleteSelected()"
+                    :disabled="!selectedPhases || !selectedPhases.length"
+                />
+            </div>
+            <div>
+                <Button
+                    :label="labels.export"
+                    icon="pi pi-upload"
+                    class="p-button-help p-button-raised"
+                    @click="exportCSV()"
+                />
+            </div>
         </div>
-        <!-- /botón para crear nueva fase -->
+        <!-- /botones de configuración -->
 
         <!-- tabla de fases - datatables -->
         <DataTable
@@ -19,6 +37,7 @@
             :paginator="true"
             class="p-datatable-customers"
             :rows="10"
+            ref="dt"
             dataKey="id"
             :rowHover="true"
             filterDisplay="menu"
@@ -48,10 +67,14 @@
             <template #empty>{{ labels.notFound }}</template>
             <template #loading>{{ labels.loading }}</template>
 
+            <!-- multiple -->
             <Column
                 selectionMode="multiple"
+                :exportable="false"
                 :styles="{ 'min-width': '3rem' }"
             ></Column>
+
+            <!-- título -->
             <Column
                 :header="labels.title"
                 field="title"
@@ -62,6 +85,8 @@
                     {{ data.title }}
                 </template>
             </Column>
+
+            <!-- número -->
             <Column
                 :header="labels.number"
                 field="number"
@@ -72,16 +97,21 @@
                     <span class="image-text">{{ data.number }}</span>
                 </template>
             </Column>
+
+            <!-- videos -->
             <Column
                 :header="labels.videos"
                 field="videos"
                 sortable
                 :styles="{ 'min-width': '14rem' }"
+                :exportable="false"
             >
                 <template #body="{ data }">
                     <Tree :value="getTreeVideos(data.videos)"></Tree>
                 </template>
             </Column>
+
+            <!-- created -->
             <Column
                 :header="labels.created"
                 field="created_at"
@@ -93,6 +123,8 @@
                     {{ data.created_at | date }}
                 </template>
             </Column>
+
+            <!-- updated -->
             <Column
                 :header="labels.updated"
                 field="updated_at"
@@ -104,50 +136,75 @@
                     {{ data.updated_at | date }}
                 </template>
             </Column>
+
+            <!-- acciones -->
             <Column
                 :header="labels.actions"
                 :headerStyle="{ 'min-width': '4rem', 'text-align': 'center' }"
                 :bodyStyle="{ 'text-align': 'center', overflow: 'visible' }"
             >
                 <template #body="{ data }">
-                    <a :href="getRoutes(data.id).show">
-                        <Button
-                            icon="fas fa-eye"
-                            v-tooltip.top="labels.tooltipShow"
-                            class="p-button-info p-button-raised p-button-rounded"
-                        />
-                    </a>
+                    <Button
+                        icon="fas fa-eye"
+                        v-tooltip.top="labels.tooltipShow"
+                        class="p-button-info p-button-sm"
+                        @click="showPhase(data)"
+                    />
 
                     <a :href="getRoutes(data.id).edit">
-                        <Button
+                        <!-- <Button
                             icon="fas fa-edit"
                             v-tooltip.top="labels.tooltipEdit"
-                            class="p-button-warning p-button-raised p-button-rounded"
+                            class="p-button-warning p-button-raised p-button-sm"
+                        /> -->
+                        <Button
+                            icon="pi pi-pencil"
+                            v-tooltip.top="labels.tooltipEdit"
+                            class="p-button-warning p-button-sm"
                         />
                     </a>
 
-                    <a>
-                        <Button
-                            icon="fas fa-times"
-                            v-tooltip.top="labels.tooltipDelete"
-                            class="p-button-danger p-button-raised p-button-rounded"
-                            @click="openDeleteConfirmation(data.id)"
-                        />
-                    </a>
+                    <Button
+                        icon="fas fa-times"
+                        v-tooltip.top="labels.tooltipDelete"
+                        class="p-button-danger p-button-sm"
+                        @click="openDeleteConfirmation(data.id)"
+                    />
                 </template>
             </Column>
         </DataTable>
         <!-- /tabla de fases - datatables -->
 
-        <!-- Dialog de confirmación para eliminar fase -->
-        <delete-phase-component
-            :labels="labels"
-            :selected-phase="selectedPhase"
-            :display-delete-confirmation="displayDeleteConfirmation"
-            @close-delete-confirmation="closeDeleteConfirmation()"
-            @delete-phase="deletePhase()"
-        ></delete-phase-component>
-        <!-- /Dialog de confirmación para eliminar fase -->
+        <!-- Dialogos - modales -->
+        <div>
+            <!-- Dialog de confirmación para eliminar fase -->
+            <DeletePhase
+                :labels="labels"
+                :display-delete-confirmation="displayDeleteConfirmation"
+                @close-delete-confirmation="closeDeleteConfirmation()"
+                @confirm-delete-process="deletePhase()"
+            />
+            <!-- /Dialog de confirmación para eliminar fase -->
+
+            <!-- Dialog de confirmación para eliminar las fases seleccionadas -->
+            <DeletePhase
+                :labels="labels"
+                :display-delete-confirmation="displayDeletePhases"
+                @close-delete-confirmation="closeDeleteConfirmation()"
+                @confirm-delete-process="deleteSelectedPhases()"
+            />
+            <!-- /Dialog de confirmación para eliminar las fases seleccionadas -->
+
+            <!-- info de la fase seleccionada -->
+            <InfoDialog
+                :labels="labels"
+                :phase="selectedPhase"
+                :display-show-dialog="displayShowDialog"
+                @close-show-dialog="displayShowDialog = false"
+            />
+            <!-- /info de la fase seleccionada -->
+        </div>
+        <!-- /Dialogos - modales -->
     </div>
 </template>
 
@@ -156,7 +213,8 @@
 import { FilterMatchMode } from "primevue/api";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-import DeletePhaseComponent from "./components/DeletePhaseComponent.vue";
+import DeletePhase from "./components/DeletePhaseComponent.vue";
+import InfoDialog from "./components/InfoDialogComponent.vue";
 
 // imports form primevue
 import InputText from "primevue/inputtext";
@@ -181,7 +239,8 @@ export default {
         InputText,
         Button,
         Tree,
-        DeletePhaseComponent,
+        DeletePhase,
+        InfoDialog,
     },
 
     data() {
@@ -196,10 +255,16 @@ export default {
             selectedPhases: null,
 
             // fase actual seleccionada
-            selectedPhase: null,
+            selectedPhase: [],
 
             // mostrar o no el dialog de confirmación de eliminación
             displayDeleteConfirmation: false,
+
+            // mostrar o no el dialog de eliminación de multiples fases
+            displayDeletePhases: false,
+
+            // mostrar o no el dialog de info de fase
+            displayShowDialog: false,
 
             // loading de búsqueda de la tabla de fases
             loading: false,
@@ -310,7 +375,8 @@ export default {
          */
         closeDeleteConfirmation() {
             this.displayDeleteConfirmation = false;
-            this.selectedPhase = null;
+            this.displayDeletePhases = false;
+            this.selectedPhase = [];
         },
 
         /**
@@ -322,7 +388,9 @@ export default {
                 .delete(route("phases.destroy", this.selectedPhase))
                 .then((response) => {
                     this.$toast.success(response.data.message);
-                    this.getPhases();
+                    this.data = this.data.filter(
+                        (phase) => phase.id !== this.selectedPhase
+                    );
                 })
                 .catch((error) => {
                     console.log(error);
@@ -331,6 +399,55 @@ export default {
                     this.closeDeleteConfirmation();
                     loader.hide();
                 });
+        },
+
+        /**
+         * Exporta los datos de la tabla fases a csvs
+         */
+        exportCSV() {
+            this.$refs.dt.exportCSV();
+        },
+
+        /**
+         * Abre el diálogo de confirmación de eliminación de multiples fases
+         */
+        confirmDeleteSelected() {
+            this.displayDeletePhases = true;
+        },
+
+        /**
+         * Elimina las fases seleccionadas
+         */
+        async deleteSelectedPhases() {
+            const loader = this.$loading.show();
+
+            const ids = this.selectedPhases.map((phase) => phase.id);
+
+            await axios
+                .post(route("phases.destroySelected"), ids)
+                .then((response) => {
+                    this.$toast.success(response.data.message);
+                    this.data = this.data.filter(
+                        (phase) => !ids.includes(phase.id)
+                    );
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
+                .finally(() => {
+                    this.closeDeleteConfirmation();
+                    loader.hide();
+                });
+        },
+
+        /**
+         * Abre el diálogo de info de fase
+         *
+         * @param {object} phase    La fase completa
+         */
+        showPhase(phase) {
+            this.selectedPhase = { ...phase };
+            this.displayShowDialog = true;
         },
     },
 
