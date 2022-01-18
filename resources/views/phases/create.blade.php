@@ -2,29 +2,23 @@
 
 @section('subtitle', 'Crear fase')
 
-@section('css')
-    {{-- aplicar para usar bootstrap vue --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
-        integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
-@stop
-
 @section('content')
-    <div id="app" v-cloak class="bg-light">
+    <div id="app" v-cloak>
 
-        {{--  textos necesarios para vue  --}}
+        {{-- textos necesarios para vue --}}
         @include('phases.partials.texts')
-        {{--  /textos necesarios para vue  --}}
+        {{-- /textos necesarios para vue --}}
 
-        <div class="container py-4">
-            <div class="py-2">
-                <a class="btn btn-outline-danger" href="{{ route('phases.index') }}" role="button">
+        <div class="container py-4 bg-light">
+            <div class="py-2 mb-2">
+                <a class="btn btn-secondary" href="{{ route('phases.index') }}" role="button">
                     <i class="fas fa-arrow-left"></i>
                     @lang('Volver al listado de fases')
                 </a>
             </div>
-            <h2 class="text-muted">@lang('Crear nueva fase')</h2>
             <div class="card text-dark">
                 <div class="card-body">
+                    <h2 class="border-bottom border-2 border-primary pb-3">@lang('Crear nueva fase')</h2>
                     <form-component></form-component>
                 </div>
             </div>

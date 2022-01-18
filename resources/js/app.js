@@ -25,7 +25,7 @@ import 'vue-loading-overlay/dist/vue-loading.css';
 // core y tema para primevue
 import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
-import "primevue/resources/themes/saga-green/theme.css";
+import "primevue/resources/themes/mdc-light-indigo/theme.css";
 
 // aplicar usos globales
 Vue.use(BootstrapVue);

@@ -5,6 +5,7 @@
 @section('content')
     <div id="app" v-cloak>
 
+        {{--  textos requeridos para vue  --}}
         <div class="d-none" id="labels" data-phase="@lang('Listado de fases')"
             data-create-phase="@lang('Crear fase')" data-search="@lang('Buscar...')"
             data-not-found="@lang('Elemento no encontrado')" data-loading="@lang('Buscando, por favor espere...')"
@@ -19,8 +20,9 @@
             data-export-xls="@lang('Exportar a XLS')" data-export="@lang('Exportar')"
             data-show-phase="@lang('Información de la fase')" data-edit-phase="@lang('Editar fase')"
             data-create-phase="@lang('Crear fase')" data-close="@lang('Cerrar')"></div>
+        {{--  /textos requeridos para vue  --}}
 
-        <div class="container my-4 bg-white">
+        <div class="container my-4">
             <index-component></index-component>
         </div>
     </div>

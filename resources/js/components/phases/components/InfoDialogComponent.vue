@@ -1,80 +1,105 @@
 <template>
     <div v-if="isObject(phase)">
-        <Dialog
-            :visible.sync="displayShowDialog"
-            :header="labels.showPhase"
-            :style="{ width: '50vw' }"
-            :maximizable="true"
-        >
-            <div class="p-field">
-                <label for="title" class="fw-bold">{{ labels.title }}</label>
-                <span class="">{{ phase.title }}</span>
-            </div>
-            <div class="p-field">
-                <label for="number" class="fw-bold">{{ labels.number }}</label>
-                <span class="">{{ phase.number }}</span>
-            </div>
-            <div class="p-field">
-                <label for="created" class="fw-bold">{{ labels.created }}</label>
-                <span class="">{{ phase.created_at | date }}</span>
-            </div>
-            <div class="p-field">
-                <label for="updated" class="fw-bold">{{ labels.updated }}</label>
-                <span class="">{{ phase.updated_at | date }}</span>
-            </div>
-            <div class="p-field">
-                <OrderList
-                    v-model="videos"
-                    dataKey="id"
+        <Dialog :visible.sync="displayShowDialog" :closable="false">
+            <template #header>
+                <div
+                    class="d-flex justify-content-between bg-primary bg-opacity-75 w-100 py-3 px-2 align-items-center rounded"
                 >
-                    <template #header> {{ labels.videos }} </template>
-                    <template #item="slotProps">
-                        <div class="d-flex flex-column">
-                            <div>
-                                <div v-if="slotProps.item.url">
-                                    <video-embed
-                                        :src="slotProps.item.url"
-                                        class="embed-responsive-item"
-                                    ></video-embed>
-                                </div>
-                                <div v-else-if="slotProps.item.data">
-                                    <video
-                                        :src="
-                                            'data:video/*;base64,' +
-                                            slotProps.item.data
-                                        "
-                                        controls
-                                        class="embed-responsive-item"
-                                        style="width: 30vw; height: 20vw;"
-                                    ></video>
-                                </div>
-                            </div>
-                            <div class="p-caritem-vin">
-                                <h5 class="p-mb-2">
-                                    {{ slotProps.item.name }}
-                                </h5>
-                                <div v-if="slotProps.item.size">
-                                    <i class="fas fa-arrow-right"></i>
-                                    <span class="product-category">{{
-                                        slotProps.item.size | megabytes
-                                    }}</span>
-                                </div>
+                    <div>
+                        <h3 class="text-white">
+                            <i class="fas fa-info-circle"></i>
+                            {{ labels.showPhase }}
+                        </h3>
+                    </div>
+                    <div>
+                        <Button
+                            icon="pi pi-times"
+                            class="p-button-sm text-white p-button-link"
+                            @click="$emit('close-show-dialog', false)"
+                        />
+                    </div>
+                </div>
+            </template>
+            <Fieldset :legend="phase.title" :toggleable="true">
+                <p>
+                    <i class="pi pi-arrow-circle-right"></i>
+                    <label for="title" class="fw-bold">{{
+                        labels.number
+                    }}</label>
+                    <span class="">{{ phase.number }}</span>
+                </p>
+                <p>
+                    <i class="pi pi-arrow-circle-right"></i>
+                    <label for="title" class="fw-bold">{{
+                        labels.created
+                    }}</label>
+                    <span class="">{{ phase.created_at | date }}</span>
+                </p>
+                <p>
+                    <i class="pi pi-arrow-circle-right"></i>
+                    <label for="title" class="fw-bold">{{
+                        labels.updated
+                    }}</label>
+                    <span class="">{{ phase.updated_at | date }}</span>
+                </p>
+
+                <DataView
+                    :value="videos"
+                    layout="list"
+                    :paginator="true"
+                    :rows="1"
+                >
+                    <template #list="props">
+                        <div class="mt-2">
+                            <div
+                                class="d-flex flex-column p-2 justify-content-center"
+                            >
                                 <div>
-                                    <i class="fas fa-arrow-right"></i>
-                                    <span class="product-category">{{
-                                        slotProps.item.created_at | date
-                                    }}</span>
+                                    <div v-if="props.data.url">
+                                        <video-embed
+                                            :src="props.data.url"
+                                            class="embed-responsive-item text-center"
+                                        ></video-embed>
+                                    </div>
+                                    <div v-else-if="props.data.data">
+                                        <video
+                                            :src="
+                                                'data:video/*;base64,' +
+                                                props.data.data
+                                            "
+                                            controls
+                                            class="embed-responsive-item text-center"
+                                            style="width: 30vw; height: 20vw"
+                                        ></video>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <h5 class="fw-bold">
+                                        {{ props.data.name }}
+                                    </h5>
+                                    <div v-if="props.data.size">
+                                        <i class="pi pi-arrow-circle-right"></i>
+                                        <span class="product-category">{{
+                                            props.data.size | megabytes
+                                        }}</span>
+                                    </div>
+                                    <div>
+                                        <i class="pi pi-arrow-circle-right"></i>
+                                        <span class="product-category">{{
+                                            props.data.created_at | date
+                                        }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </template>
-                </OrderList>
-            </div>
+                </DataView>
+            </Fieldset>
             <template #footer>
                 <Button
                     :label="labels.close"
                     icon="pi pi-times"
-                    class="p-button-success"
+                    class="p-button-danger"
                     @click="$emit('close-show-dialog', false)"
                 />
             </template>
@@ -86,7 +111,8 @@
 // imports
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
-import OrderList from "primevue/orderlist";
+import DataView from "primevue/dataview";
+import Fieldset from "primevue/fieldset";
 
 // utilizar el componente de vue para la  reproducción de videos
 import Embed from "v-video-embed";
@@ -101,7 +127,8 @@ export default {
     components: {
         Dialog,
         Button,
-        OrderList,
+        DataView,
+        Fieldset,
     },
 
     props: {
@@ -116,11 +143,6 @@ export default {
             type: Boolean,
             default: false,
         },
-    },
-
-    mounted() {
-        // this.phase = this.phase || {};
-        console.log(this.phase);
     },
 
     methods: {

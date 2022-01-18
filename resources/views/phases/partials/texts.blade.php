@@ -8,7 +8,10 @@
     data-video-name="@lang('Nombre')" data-video-type="@lang('Tipo')" data-video-size="@lang('Tamaño')"
     data-video-via="@lang('Vía')" data-video-actions="@lang('Acciones')"
     data-no-load-videos="@lang('Ningún video cargado')" data-delete-button="@lang('Eliminar')"
-    data-load-videos-button="@lang('Cargar videos')" data-url="@lang('URL')" data-upload="@lang('Archivo')"></div>
+    data-load-videos-button="@lang('Cargar videos')" data-url="@lang('URL')" data-upload="@lang('Archivo')"
+    data-dragdrop="@lang('Arrastre y suelte los archivos aquí para cargarlos')"
+    data-browse-input="@lang('Buscar...')"
+    ></div>
 {{-- /texto para labels --}}
 
 {{-- placeholders --}}

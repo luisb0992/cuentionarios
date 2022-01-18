@@ -1,8 +1,8 @@
 <template>
-    <div class="mt-4">
-        <!-- botones de configuración -->
+    <div class="mt-4 bg-white">
+        <!-- botones de configuración - toolbar -->
         <div
-            class="d-flex flex-row justify-content-between align-items-center bg-light px-3 py-2"
+            class="d-flex flex-row justify-content-between align-items-center px-2 py-3 border-bottom border-2 border-primary"
         >
             <div>
                 <a :href="getRoutes().create">
@@ -29,7 +29,7 @@
                 />
             </div>
         </div>
-        <!-- /botones de configuración -->
+        <!-- /botones de configuración - toolbar -->
 
         <!-- tabla de fases - datatables -->
         <DataTable
@@ -152,11 +152,6 @@
                     />
 
                     <a :href="getRoutes(data.id).edit">
-                        <!-- <Button
-                            icon="fas fa-edit"
-                            v-tooltip.top="labels.tooltipEdit"
-                            class="p-button-warning p-button-raised p-button-sm"
-                        /> -->
                         <Button
                             icon="pi pi-pencil"
                             v-tooltip.top="labels.tooltipEdit"
@@ -175,7 +170,7 @@
         </DataTable>
         <!-- /tabla de fases - datatables -->
 
-        <!-- Dialogos - modales -->
+        <!-- Diálogos - modales -->
         <div>
             <!-- Dialog de confirmación para eliminar fase -->
             <DeletePhase
@@ -204,7 +199,7 @@
             />
             <!-- /info de la fase seleccionada -->
         </div>
-        <!-- /Dialogos - modales -->
+        <!-- /Diálogos - modales -->
     </div>
 </template>
 

@@ -1,92 +1,133 @@
 <template>
-    <div>
+    <div class="p-fluid p-grid mt-4">
         <form @submit.prevent="createPhase()">
             <!-- numero de la fase -->
             <div class="form-group py-2">
-                <i class="fas fa-list-alt"></i>
-                <label for="phase">{{ labels.phase }}</label>
-                <input
-                    type="text"
-                    class="form-control"
-                    id="phase"
-                    :value="labels.number"
-                    disabled
-                />
+                <div class="p-field p-col-12">
+                    <span class="p-float-label p-input-icon-left">
+                        <i class="fas fa-list-alt"></i>
+                        <InputText
+                            id="phase"
+                            type="text"
+                            :value="labels.number"
+                            disabled
+                        />
+                        <label for="phase">{{ labels.phase }}</label>
+                    </span>
+                </div>
             </div>
             <!-- /numero de la fase -->
 
             <!-- titulo de la fase -->
             <div class="form-group py-2">
-                <i class="fas fa-heading"></i>
-                <label for="title">{{ labels.title }}</label>
-                <input
-                    type="text"
-                    class="form-control"
-                    id="title"
-                    :placeholder="placeholders.title"
-                    v-model="form.title"
-                />
+                <div class="p-field p-col-12">
+                    <span class="p-float-label p-input-icon-left">
+                        <i class="fas fa-heading"></i>
+                        <InputText
+                            id="title"
+                            type="text"
+                            v-model="form.title"
+                        />
+                        <label for="title">{{ labels.title }}</label>
+                    </span>
+                </div>
             </div>
             <!-- /titulo de la fase -->
 
             <!-- carga de videos -->
-            <div class="form-group py-2">
-                <i class="fas fa-file-video"></i>
-                <label for="addFiles">{{ labels.addFiles }}</label>
-                <p class="lead">
-                    <small>{{ labels.selectMethod }}</small>
-                </p>
+            <div class="form-group py-2 mt-2">
+                <h5 class="lead border-2 border-bottom border-primary pb-3">
+                    <i class="far fa-file-video"></i>
+                    {{ labels.addFiles }}
+                </h5>
 
                 <!-- botones para seleccionar por subida o url -->
-                <div>
-                    <button
-                        type="button"
-                        class="btn btn-info"
-                        @click="viaFile()"
-                    >
-                        <i class="fas fa-upload"></i>
-                        {{ labels.viaFile }}
-                    </button>
-                    <button
-                        type="button"
-                        class="btn btn-success"
-                        @click="viaUrl()"
-                    >
-                        <i class="fas fa-link"></i>
-                        {{ labels.viaUrl }}
-                    </button>
+                <div class="d-flex mt-3 flex-column flex-sm-row">
+                    <div class="me-sm-2 mb-2 mb-sm-0">
+                        <Button
+                            :label="labels.viaFile"
+                            class="p-button-info"
+                            icon="fas fa-upload"
+                            @click="viaFile()"
+                        />
+                    </div>
+                    <div class="me-sm-2 mb-2 mb-sm-0">
+                        <Button
+                            :label="labels.viaUrl"
+                            class="p-button-secondary"
+                            icon="fas fa-link"
+                            @click="viaUrl()"
+                        />
+                    </div>
+                    <div class="ms-sm-auto">
+                        <Button
+                            :label="labels.loadVideosButton"
+                            class="p-button-success"
+                            icon="fas fa-file-import"
+                            :disabled="!videosFile.length && !existsUrlVideos"
+                            @click="loadVideosToTable()"
+                        />
+                    </div>
                 </div>
                 <!-- /botones para seleccionar por subida o url -->
 
                 <!-- videos subidos -->
                 <div v-if="isFiles" class="mt-2">
-                    <b-form-file
-                        v-model="videosFile"
-                        :placeholder="placeholders.videos"
-                        :drop-placeholder="placeholders.drop"
-                        :browse-text="placeholders.browseInput"
-                        multiple
-                        accept=".mp4, .flv, .avi"
-                        size="lg"
-                        :file-name-formatter="formatNames"
-                        @input="checkVideoFile()"
-                    ></b-form-file>
-                    <div
-                        class="row align-items-center mt-3"
-                        v-for="(video, index) in videosFile"
-                        :key="index"
-                    >
-                        <div class="col-md-3">
-                            <video
-                                :src="video.preview"
-                                controls
-                                class="col-md-12"
-                            ></video>
+                    <div class="py-2">
+                        <input
+                            class="form-control"
+                            type="file"
+                            multiple
+                            accept=".mp4, .flv, .avi"
+                            name="videos[]"
+                            @input="checkVideoFile"
+                            id="inputVideoFile"
+                        />
+                    </div>
+                    <div class="container">
+                        <div
+                            class="row align-items-center mt-3 border py-2"
+                            v-for="(video, index) in videosFile"
+                            :key="index"
+                        >
+                            <div class="col-md-3">
+                                <video
+                                    :src="video.preview"
+                                    controls
+                                    class="ratio ratio-4x3"
+                                    style="max-height: 150px"
+                                ></video>
+                            </div>
+                            <div class="col-md-9 text-center text-sm-start">
+                                <div class="text-primary">
+                                    <i class="pi pi-arrow-circle-right"></i>
+                                    {{ video.name }}
+                                </div>
+                                <div class="text-muted">
+                                    <i class="pi pi-arrow-circle-right"></i>
+                                    {{ video.type }}
+                                </div>
+                                <div class="text-muted">
+                                    <i class="pi pi-arrow-circle-right"></i>
+                                    {{ video.sizeMB }} MB
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-9">
-                            <div class="text-primary">{{ video.name }}</div>
-                            <div class="text-muted">{{ video.type }}</div>
-                            <div class="text-muted">{{ video.sizeMB }} MB</div>
+                    </div>
+                    <div
+                        v-if="videosFile.length"
+                        class="d-flex justify-content-end mt-4"
+                    >
+                        <div>
+                            <Button
+                                :label="labels.loadVideosButton"
+                                class="p-button-success"
+                                icon="fas fa-file-import"
+                                :disabled="
+                                    !videosFile.length && !existsUrlVideos
+                                "
+                                @click="loadVideosToTable()"
+                            />
                         </div>
                     </div>
                 </div>
@@ -134,39 +175,27 @@
                             </button>
                         </div>
                     </div>
-                    <button
-                        type="button"
-                        class="btn btn-primary mt-1"
-                        @click="addUrlInput()"
-                    >
-                        <i class="fas fa-plus"></i>
-                        {{ labels.addInputUrl }}
-                    </button>
+                    <div class="text-center">
+                        <button
+                            type="button"
+                            class="btn btn-info mt-1"
+                            @click="addUrlInput()"
+                        >
+                            <i class="fas fa-plus"></i>
+                            {{ labels.addInputUrl }}
+                        </button>
+                    </div>
                 </div>
                 <!-- /videos cargados por url -->
-                <hr />
-
-                <!-- botón para cargar videos en la tabla -->
-                <div>
-                    <button
-                        type="button"
-                        class="btn btn-outline-warning"
-                        @click="loadVideosToTable()"
-                    >
-                        <i class="fas fa-file-import"></i>
-                        {{ labels.loadVideosButton }}
-                    </button>
-                </div>
-                <!-- /botón para cargar videos en la tabla -->
             </div>
             <!-- /carga de videos -->
 
             <!-- tabla de videos cargados por url o upload -->
-            <div class="form-group py-2 shadow">
-                <label for="uploadFiles">
+            <div class="form-group py-2 mt-3">
+                <h5 class="lead border-2 border-bottom border-primary pb-3">
                     <i class="fas fa-table"></i>
                     {{ labels.uploadFiles }}
-                </label>
+                </h5>
                 <div class="table-responsive">
                     <table class="table table-hover table-light">
                         <thead>
@@ -199,11 +228,12 @@
                                     }}
                                 </td>
                                 <td>
-                                    <b-badge
-                                        :variant="
+                                    <span
+                                        class="badge"
+                                        :class="
                                             video.via === TYPE_UPLOAD.url
-                                                ? 'success'
-                                                : 'info'
+                                                ? 'bg-success'
+                                                : 'bg-info'
                                         "
                                     >
                                         {{
@@ -211,7 +241,7 @@
                                                 ? labels.url
                                                 : labels.upload
                                         }}
-                                    </b-badge>
+                                    </span>
                                 </td>
                                 <td>
                                     <button
@@ -231,10 +261,16 @@
 
             <!-- submit del formulario -->
             <div class="py-2 text-right">
-                <button type="submit" class="btn btn-outline-primary btn-lg">
-                    <i class="fas fa-save"></i>
-                    {{ labels.submit }}
-                </button>
+                <div class="d-flex justify-content-end">
+                    <div>
+                        <Button
+                            type="submit"
+                            :label="labels.submit"
+                            class="p-button-primary p-button-lg"
+                            icon="fas fa-save"
+                        />
+                    </div>
+                </div>
             </div>
             <!-- /submit del formulario -->
         </form>
@@ -242,12 +278,21 @@
 </template>
 
 <script>
+// imports de prime vue
+import InputText from "primevue/inputtext";
+import Button from "primevue/button";
+
 // utilizar el componente de vue para la  reproducción de videos
 import Embed from "v-video-embed";
 Vue.use(Embed);
 
 export default {
     name: "Form",
+
+    components: {
+        InputText,
+        Button,
+    },
 
     data() {
         return {
@@ -354,6 +399,9 @@ export default {
          */
         clearUploadVideos() {
             this.videosFile = [];
+            if (document.getElementById("inputVideoFile")) {
+                document.getElementById("inputVideoFile").value = "";
+            }
         },
 
         /**
@@ -376,11 +424,8 @@ export default {
         /**
          * evaluar si el o los archivos seleccionados son validos
          */
-        checkVideoFile() {
-            // prevenir cualquier error
-            if (!this.videosFile.length) {
-                return;
-            }
+        checkVideoFile(event) {
+            this.videosFile = [...event.target.files];
 
             let continuar = true;
 
@@ -424,14 +469,11 @@ export default {
          * Agregar o cargar videos a la tabla
          */
         loadVideosToTable() {
-            const notUrlVideo = this.videosUrl.every(
-                (video) => !video.url.length
-            );
             const notUploadVideo = !this.videosFile.length;
 
             // verificar que las urls sean validas
-            if (notUrlVideo && notUploadVideo) {
-                this.$toast.warning(this.appMessages.emptyVideos);
+            if (!this.existsUrlVideos && notUploadVideo) {
+                this.$toast.error(this.appMessages.emptyVideos);
                 return;
             }
 
@@ -492,13 +534,13 @@ export default {
         createPhase() {
             // verificar que existan videos agregados
             if (!this.videos.length) {
-                this.$toast.warning(this.appMessages.requiredVideos);
+                this.$toast.error(this.appMessages.requiredVideos);
                 return;
             }
 
             // verificar el título
             if (!this.form.title.length) {
-                this.$toast.warning(this.appMessages.requiredTitle);
+                this.$toast.error(this.appMessages.requiredTitle);
                 return;
             }
 
@@ -531,6 +573,15 @@ export default {
                 .finally(() => {
                     loader.hide();
                 });
+        },
+    },
+
+    computed: {
+        /**
+         * si existen videos por url agregados al arreglo
+         */
+        existsUrlVideos() {
+            return this.videosUrl.every((video) => video.url.length >= 7);
         },
     },
 };

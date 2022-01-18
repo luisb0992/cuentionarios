@@ -2,8 +2,8 @@
     <Dialog
         :header="labels.confirmationTitle"
         :visible.sync="displayDeleteConfirmation"
-        :style="{ width: '350px' }"
         :modal="true"
+        :closable="false"
     >
         <div class="confirmation-content">
             <i class="fas fa-exclamation-triangle" />
