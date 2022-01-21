@@ -349,14 +349,6 @@ export default {
     },
 
     methods: {
-        /**
-         * dar formato al input de nombre de archivos
-         */
-        formatNames(files) {
-            return files.length === 1
-                ? files[0].name
-                : `${files.length} ${this.labels.nameFiles}`;
-        },
 
         /**
          * subir videos por archivos

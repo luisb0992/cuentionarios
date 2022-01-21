@@ -2,6 +2,7 @@
     "/js/app.js": "/js/app.js",
     "/js/landing/landing.js": "/js/landing/landing.js",
     "/js/phases/create.js": "/js/phases/create.js",
+    "/js/phases/edit.js": "/js/phases/edit.js",
     "/js/phases/index.js": "/js/phases/index.js",
     "/css/app.css": "/css/app.css",
     "/css/custom.css": "/css/custom.css"

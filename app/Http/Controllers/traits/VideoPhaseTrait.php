@@ -12,6 +12,7 @@
 
 namespace App\Http\Controllers\Traits;
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 
 trait VideoPhaseTrait
@@ -29,12 +30,16 @@ trait VideoPhaseTrait
         $files = collect($files);
 
         // setear los archivos tipo files
-        $files = $files->map(fn ($file) => [
-            'data'  => base64_encode(file_get_contents($file->getRealPath())),
-            'name'  => $file->getClientOriginalName(),
-            'size'  => $file->getSize(),
-            'url'   => null,
-        ]);
+        $files = $files->map(function ($file) {
+            if (is_file($file)) {
+                return  [
+                    'name' => $file->getClientOriginalName(),
+                    'type' => $file->getClientMimeType(),
+                    'size' => filesize($file),
+                    'data' => base64_encode(file_get_contents($file->getRealPath())),
+                ];
+            }
+        });
 
         return $files;
     }
@@ -70,6 +75,9 @@ trait VideoPhaseTrait
      */
     public function getVideos(Collection $files, Collection $urls): array
     {
-        return $files->union($urls->toArray())->sortKeys()->all();
+        return $files->union($urls->toArray())
+            ->filter(fn ($file) => is_array($file))
+            ->sortKeys()
+            ->all();
     }
 }

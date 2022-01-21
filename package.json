@@ -30,6 +30,7 @@
         "primevue": "^2.8.0",
         "v-video-embed": "^1.0.8",
         "vue-loading-overlay": "^3.4.2",
-        "vue-toast-notification": "^0.6.2"
+        "vue-toast-notification": "^0.6.2",
+        "vue-video-player": "^5.0.2"
     }
 }

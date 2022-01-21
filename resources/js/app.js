@@ -15,6 +15,9 @@ import Loading from 'vue-loading-overlay';
 // PrimeVue
 import PrimeVue from 'primevue/config';
 
+// vue  player video
+import VideoPlayer from 'vue-video-player';
+
 //import el tema y uso global de Vuetoast
 // por default 'vue-toast-notification/dist/theme-default.css';
 import 'vue-toast-notification/dist/theme-sugar.css';
@@ -27,8 +30,12 @@ import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
 import "primevue/resources/themes/mdc-light-indigo/theme.css";
 
+// require videojs style
+import 'video.js/dist/video-js.css'
+
 // aplicar usos globales
 Vue.use(BootstrapVue);
 Vue.use(VueToast);
 Vue.use(Loading);
 Vue.use(PrimeVue);
+Vue.use(VideoPlayer);

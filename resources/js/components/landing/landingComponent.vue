@@ -7,7 +7,7 @@
             :password-placeholder="passwordPlaceholder"
         ></heading-component>
 
-        <phase-grouping-component :phase="phase"></phase-grouping-component>
+        <phase-grouping-component :phases="phases"></phase-grouping-component>
     </div>
 </template>
 
@@ -46,7 +46,7 @@ export default {
             default: "**********",
             description: "Placeholder para el input tipo password",
         },
-        phase: {
+        phases: {
             description:
                 "Fase con su respectiva información (videos y cuestionarios)",
         },

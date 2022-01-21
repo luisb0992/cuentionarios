@@ -111,38 +111,76 @@ class PhaseController extends Controller
         }
     }
 
+
     /**
-     * Display the specified resource.
+     * Devuelve la fase con el id especificado.
      *
      * @param  \App\Models\Phase  $phase
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function show(Phase $phase)
+    public function edit(Phase $phase): View
     {
-        //
+        return view('phases.edit', [
+            'phase' => $phase->load('videos'),
+            'lastPhaseNumber' => Phase::lastPhaseNumber(),
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Actualizar la fase y sus propiedades
      *
      * @param  \App\Models\Phase  $phase
      * @return \Illuminate\Http\Response
      */
-    public function edit(Phase $phase)
+    public function updatePhase(Phase $phase)
     {
-        //
-    }
+        $data = request()->all();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Phase  $phase
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Phase $phase)
-    {
-        //
+        // videos subidos por archivo
+        $fileVideos = $data['videos']['file'] ?? [];
+
+        // videos subidos por url
+        $urlVideos = $data['videos']['url'] ?? [];
+
+        // ids de videos a ignorar, no modificables
+        $idsVideos = $data['videos']['ids'] ?? [];
+
+        // videos base 64
+        $files = $this->getBase64Video($fileVideos);
+
+        // videos por URL
+        $urls = $this->getUrlVideo($urlVideos);
+
+        // videos a guardar en la base de datos
+        $videos = $this->getVideos($files, $urls);
+
+        // formato limpio con los ids a ignorar - no modificables
+        $idsVideos = collect($idsVideos)->map(fn ($id) => (int) $id)->filter()->toArray();
+
+        $id = DB::transaction(function () use ($phase, $videos, $data, $idsVideos) {
+
+            // actualizar la phase
+            $phase->update(['title' => $data['title']]);
+
+            // eliminar videos fuera del array de ids de videos a ignorar
+            $phase->videos()->whereNotIn('id', $idsVideos)->delete();
+
+            // guardar videos de la phase actual
+            $phase->videos()->createMany($videos);
+
+            return $phase->id;
+        });
+
+        if ($id) {
+            return response()->json([
+                'message' => Lang::get('La fase se ha actualizado correctamente.'),
+                'id' => $id,
+            ], 201);
+        } else {
+            return response()->json([
+                'message' => Lang::get('Ha ocurrido un error al actualizar la fase.'),
+            ], 500);
+        }
     }
 
     /**

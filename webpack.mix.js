@@ -13,5 +13,6 @@ mix.js("resources/js/landing/landing.js", "public/js/landing").vue();
 
 // Archivos para el funcionamiento del modulo de fases
 mix.js("resources/js/phases/create.js", "public/js/phases")
+    .js("resources/js/phases/edit.js", "public/js/phases")
     .js("resources/js/phases/index.js", "public/js/phases")
     .vue();
