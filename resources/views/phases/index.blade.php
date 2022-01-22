@@ -23,7 +23,7 @@
         {{--  /textos requeridos para vue  --}}
 
         <div class="container my-4">
-            <index-component></index-component>
+            <index-component pathvideos="{{ $path_videos }}"></index-component>
         </div>
     </div>
 @stop

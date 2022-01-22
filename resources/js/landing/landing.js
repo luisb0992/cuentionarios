@@ -6,11 +6,11 @@
  * @copyright 2021 https://project4design.com/
  */
 
-import LandingComponent from './../components/landing/LandingComponent';
+import Landing from './../components/landing/LandingComponent';
 
 new Vue({
     el: '#app',
     components: {
-        LandingComponent
+        Landing
     },
 });

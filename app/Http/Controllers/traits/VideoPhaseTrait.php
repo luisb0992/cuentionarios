@@ -12,8 +12,8 @@
 
 namespace App\Http\Controllers\Traits;
 
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 
 trait VideoPhaseTrait
 {
@@ -79,5 +79,52 @@ trait VideoPhaseTrait
             ->filter(fn ($file) => is_array($file))
             ->sortKeys()
             ->all();
+    }
+
+    /**
+     * Almacena los videos en el disco indicado
+     *
+     * @param Array $files          Array de archivos
+     * @return Collection           Colección de archivos con la estructura
+     */
+    public function uploadFiles(array $files): Collection
+    {
+        // convertir a una colección
+        $files = collect($files);
+
+        // almacenar los videos
+        $files = $files->map(function ($file) {
+            // obtener el nombre del archivo
+            $filename = time() . '-' . $file->getClientOriginalName();
+
+            // guardar el archivo en el storage
+            Storage::disk(env('FILESYSTEM_DRIVER'))->putFileAs(
+                config('videos.folder'),
+                $file,
+                $filename
+            );
+
+            // devolver la estructura para almacenar en BD
+            return [
+                'name' => $file->getClientOriginalName(),
+                'type' => $file->getClientMimeType(),
+                'size' => filesize($file),
+                'data' => $filename,
+            ];
+        });
+
+        return $files;
+    }
+
+    /**
+     * Devuelve un array con los ids de los videos a ignorar
+     * no modificables
+     *
+     * @param Array $idsVideos          Array de ids de videos
+     * @return Array                    Array de ids de videos limpios
+     */
+    public function getIdsToIgnore(array $idsVideos): array
+    {
+        return collect($idsVideos)->map(fn ($id) => (int) $id)->filter()->toArray();
     }
 }

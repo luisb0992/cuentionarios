@@ -22,6 +22,10 @@ class AppServiceProvider extends ServiceProvider
         // El usuario registrado o el usuario invitado, según sea el caso
         View::composer('*', fn ($view) => $view->with('user', Auth::user() ?? null));
 
+        // Obtener la ruta absoluta donde se encuentran los videos subidos
+        $path = env('APP_URL') . '/storage/' . config('videos.folder') . '/';
+        View::composer('*', fn ($view) => $view->with('path_videos', $path));
+
         // Usa los estilos CSS de Bootstrap para el paginador
         Paginator::useBootstrap();
 

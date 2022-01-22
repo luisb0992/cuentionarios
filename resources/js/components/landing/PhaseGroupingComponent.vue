@@ -23,6 +23,9 @@
                         </div>
                     </div>
                 </div>
+                <!-- <div class="mb-3">
+                    <video :src="data" controls></video>
+                </div> -->
                 <div class="text-center w-50">
                     <video-player
                         class="video-player"
@@ -54,6 +57,9 @@ export default {
         phases: {
             description:
                 "Fases con su respectiva información (videos y cuestionarios)",
+        },
+        pathVideos: {
+            description: "Ruta donde se encuentran los videos",
         },
     },
 
@@ -94,7 +100,9 @@ export default {
     },
 
     mounted() {
-        const video = this.phase.videos[0];
+        const video = this.phase.videos[1];
+        console.log(video);
+        console.log(this.pathVideos);
 
         // const file = new File([video.data], "video.mp4", {
         //     type: video.type,
@@ -107,10 +115,19 @@ export default {
         // const finalVideo = URL.createObjectURL(file).replace('blob:', '') + '.mp4';
 
         // console.log(finalVideo);
+        // this.$nextTick(() => {
+        //     this.playerOptions.sources = [
+        //         {
+        //             src: "data:video/*;base64," + video.data,
+        //             type: video.type,
+        //         },
+        //     ];
+
+        // });
 
         this.playerOptions.sources = [
             {
-                src: "data:video/*;base64," + video.data, //'https://www.youtube.com/watch?v=cNqwyLhyVkw&ab_channel=SarahD.Cloutier',
+                src: this.pathVideos + video.data, //'https://www.youtube.com/watch?v=cNqwyLhyVkw&ab_channel=SarahD.Cloutier',
                 type: video.type,
             },
         ];
@@ -156,7 +173,7 @@ export default {
         playerReadied(player) {
             // seek to 10s
             console.log("example player 1 readied", player);
-            player.currentTime(10);
+            // player.currentTime(10);
             // player.currentTime(10);
             // console.log('example 01: the player is readied', player)
         },

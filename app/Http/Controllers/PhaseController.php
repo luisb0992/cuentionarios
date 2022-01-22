@@ -74,8 +74,9 @@ class PhaseController extends Controller
         $fileVideos = $data['videos']['file'] ?? [];
         $urlVideos = $data['videos']['url'] ?? [];
 
-        // videos base 64
-        $files = $this->getBase64Video($fileVideos);
+        // videos subidos
+        // $files = $this->getBase64Video($fileVideos);
+        $files = $this->uploadFiles($fileVideos);
 
         // videos por URL
         $urls = $this->getUrlVideo($urlVideos);
@@ -146,24 +147,26 @@ class PhaseController extends Controller
         $idsVideos = $data['videos']['ids'] ?? [];
 
         // videos base 64
-        $files = $this->getBase64Video($fileVideos);
+        // $files = $this->getBase64Video($fileVideos);
+        // archivos de videos subidos
+        $files = $this->uploadFiles($fileVideos);
 
         // videos por URL
         $urls = $this->getUrlVideo($urlVideos);
 
-        // videos a guardar en la base de datos
+        // // videos a guardar en la base de datos
         $videos = $this->getVideos($files, $urls);
 
         // formato limpio con los ids a ignorar - no modificables
-        $idsVideos = collect($idsVideos)->map(fn ($id) => (int) $id)->filter()->toArray();
+        $idsToIgnore = $this->getIdsToIgnore($idsVideos);
 
-        $id = DB::transaction(function () use ($phase, $videos, $data, $idsVideos) {
+        $id = DB::transaction(function () use ($phase, $videos, $data, $idsToIgnore) {
 
             // actualizar la phase
             $phase->update(['title' => $data['title']]);
 
             // eliminar videos fuera del array de ids de videos a ignorar
-            $phase->videos()->whereNotIn('id', $idsVideos)->delete();
+            $phase->videos()->whereNotIn('id', $idsToIgnore)->delete();
 
             // guardar videos de la phase actual
             $phase->videos()->createMany($videos);

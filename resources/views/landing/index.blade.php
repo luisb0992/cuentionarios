@@ -3,9 +3,11 @@
 @section('subtitle', 'Sitio exclusivo para socios')
 
 @section('content')
+
     <div id="app" v-cloak>
-        <landing-component title="@lang('Título')" video="@lang('Video')" subtitle="@lang('Sitio exclusivo para socios')"
-            password-placeholder="@lang('Introduce un password...')" :phases="{{ json_encode($phases) }}" />
+        <landing title="@lang('Título')" video="@lang('Video')" subtitle="@lang('Sitio exclusivo para socios')"
+            password-placeholder="@lang('Introduce un password...')" :phases="{{ json_encode($phases) }}"
+            path-videos="{{ $path_videos }}" />
     </div>
 @stop
 

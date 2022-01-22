@@ -24,7 +24,7 @@ class VideoPhase extends Model
         'name',                 // Nombre del video.
         'type',                 // tipo/formato de video.
         'size',                 // Tamaño del video.
-        'data',                 // Datos del video (si es un archivo subido).
+        'data',                 // Datos del video/path (si es un archivo subido).
         'url',                  // URL del video (si es un video de YouTube, vimeo, etc).
     ];
 

@@ -7,12 +7,14 @@
             :password-placeholder="passwordPlaceholder"
         ></heading-component>
 
-        <phase-grouping-component :phases="phases"></phase-grouping-component>
+        <phase-grouping-component
+            :phases="phases"
+            :pathvideos="pathvideos"
+        ></phase-grouping-component>
     </div>
 </template>
 
 <script>
-
 // Sección para la fase y su información
 import PhaseGroupingComponent from "./PhaseGroupingComponent";
 
@@ -49,6 +51,9 @@ export default {
         phases: {
             description:
                 "Fase con su respectiva información (videos y cuestionarios)",
+        },
+        pathvideos: {
+            description: "Ruta donde se encuentran los videos",
         },
     },
 };

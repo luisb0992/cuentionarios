@@ -63,10 +63,7 @@
                                     </div>
                                     <div v-else-if="props.data.data">
                                         <video
-                                            :src="
-                                                'data:video/*;base64,' +
-                                                props.data.data
-                                            "
+                                            :src="pathvideos + props.data.data"
                                             controls
                                             class="embed-responsive-item text-center"
                                             style="width: 30vw; height: 20vw"
@@ -142,6 +139,10 @@ export default {
         displayShowDialog: {
             type: Boolean,
             default: false,
+        },
+        pathvideos: {
+            type: String,
+            required: true,
         },
     },
 

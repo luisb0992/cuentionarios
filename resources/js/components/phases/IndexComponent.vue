@@ -195,6 +195,7 @@
                 :labels="labels"
                 :phase="selectedPhase"
                 :display-show-dialog="displayShowDialog"
+                :pathvideos="pathvideos"
                 @close-show-dialog="displayShowDialog = false"
             />
             <!-- /info de la fase seleccionada -->
@@ -228,6 +229,14 @@ import Tree from "primevue/tree";
 
 export default {
     name: "Indexcomponent",
+
+    props: {
+        pathvideos: {
+            type: String,
+            required: true
+        },
+    },
+
     components: {
         DataTable,
         Column,
