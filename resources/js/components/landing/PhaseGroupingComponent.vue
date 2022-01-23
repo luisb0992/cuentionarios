@@ -1,6 +1,6 @@
 <template>
     <section>
-        <div class="py-5 bg-light">
+        <div class="py-5 bg-light" v-if="phases.length">
             <div class="container">
                 <h2 class="text-center py-2">{{ phase.title }}</h2>
                 <div
@@ -109,19 +109,30 @@ export default {
         // ajustar tamaño del video
         await this.onResize();
 
-        // video a ser mostrado de primero
-        const video = this.phase.videos[1];
+        // Si existe alguna fase con videos
+        if (this.phases.length) {
+            // video a ser mostrado de primero
+            const video = this.phase.videos[1];
 
-        // opciones para cargar el video
-        this.playerOptions.sources = [
-            {
-                src: this.pathVideos + video.data,
-                type: video.type,
-            },
-        ];
+            // opciones para cargar el video
+            this.playerOptions.sources = [
+                {
+                    src: this.pathVideos + video.data,
+                    type: video.type,
+                },
+            ];
+        }
+
     },
 
     methods: {
+        /**
+         * Verificar si la phase es un objeto valido
+         */
+        // isObject(obj) {
+        //     return obj && typeof obj === "object";
+        // },
+
         /**
          * Determinar el tamaño del video según
          * el tamaño de la pantalla
