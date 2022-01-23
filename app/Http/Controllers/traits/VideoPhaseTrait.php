@@ -4,7 +4,8 @@
  * Trait VideoPhaseTrait
  *
  * Gestiona los videos de las fases, agrega funcionalidad extra
- * como la manipulación de archivos y su estructura
+ * como la manipulación de archivos y su estructura, ademas de la subida
+ * de archivos.
  *
  * @author luisbardev <luisbardev@gmail.com> <luisbardev.com>
  * @copyright 2021 P4D http://www.p4d.com
