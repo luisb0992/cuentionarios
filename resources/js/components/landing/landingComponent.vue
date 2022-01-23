@@ -9,7 +9,6 @@
 
         <phase-grouping-component
             :phases="phases"
-            :pathvideos="pathvideos"
         ></phase-grouping-component>
     </div>
 </template>
@@ -51,10 +50,7 @@ export default {
         phases: {
             description:
                 "Fase con su respectiva información (videos y cuestionarios)",
-        },
-        pathvideos: {
-            description: "Ruta donde se encuentran los videos",
-        },
+        }
     },
 };
 </script>

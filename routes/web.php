@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommonController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\PhaseController;
@@ -18,6 +19,9 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/', [LandingController::class, 'index'])->name('landing');
 
     // Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+    // devuelve el path donde se encuentran los videos
+    Route::get('/getpathvideos', [CommonController::class, 'getPathVideos'])->name('getPathVideos');
 });
 
 /**

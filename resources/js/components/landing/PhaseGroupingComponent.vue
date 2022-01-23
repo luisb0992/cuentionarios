@@ -3,9 +3,11 @@
         <div class="py-5 bg-light">
             <div class="container">
                 <h2 class="text-center py-2">{{ phase.title }}</h2>
-                <div class="d-flex justify-content-center">
+                <div
+                    class="d-flex justify-content-center mb-3 border-1 border-bottom pb-2"
+                >
                     <div class="flex-grow-1">
-                        <p class="text-muted">
+                        <p class="text-muted h5">
                             {{ "Fase " + phase.number }}
                         </p>
                     </div>
@@ -15,35 +17,38 @@
                         class="list-group"
                     >
                         <div>
-                            <a
-                                href="#"
-                                class="list-group-item list-group-item-action"
-                                >{{ video.name }}</a
+                            <span
+                                class="d-inline-block"
+                                tabindex="0"
+                                v-tooltip.top="video.name"
                             >
+                                <a
+                                    href="#"
+                                    class="list-group-item list-group-item-action list-group-item-primary"
+                                    >{{ "Video " + parseInt(index + 1) }}</a
+                                >
+                            </span>
                         </div>
                     </div>
                 </div>
-                <!-- <div class="mb-3">
-                    <video :src="data" controls></video>
-                </div> -->
-                <div class="text-center w-50">
-                    <video-player
-                        class="video-player"
-                        ref="videoPlayer"
-                        :playsinline="true"
-                        :options="playerOptions"
-                        @play="onPlayerPlay()"
-                        @pause="onPlayerPause()"
-                        @ended="onPlayerEnded()"
-                        @waiting="onPlayerWaiting()"
-                        @playing="onPlayerPlaying()"
-                        @loadeddata="onPlayerLoadeddata()"
-                        @timeupdate="onPlayerTimeupdate()"
-                        @canplay="onPlayerCanplay()"
-                        @canplaythrough="onPlayerCanplaythrough()"
-                        @statechanged="playerStateChanged()"
-                        @ready="playerReadied"
-                    ></video-player>
+                <div class="d-flex justify-content-center mt-3">
+                    <div class="">
+                        <video-player
+                            class="vjs-big-play-centered"
+                            ref="videoPlayer"
+                            :playsinline="true"
+                            :options="playerOptions"
+                            @play="onPlayerPlay($event)"
+                            @pause="onPlayerPause($event)"
+                            @ended="onPlayerEnded($event)"
+                            @playing="onPlayerPlaying($event)"
+                            @timeupdate="onPlayerTimeupdate($event)"
+                            @canplay="onPlayerCanplay($event)"
+                            @canplaythrough="onPlayerCanplaythrough($event)"
+                            @statechanged="playerStateChanged($event)"
+                            @ready="playerReadied"
+                        ></video-player>
+                    </div>
                 </div>
             </div>
         </div>
@@ -51,15 +56,16 @@
 </template>
 
 <script>
+// directiva del tooltip de primevue
+import Tooltip from "primevue/tooltip";
+Vue.directive("tooltip", Tooltip);
+
 export default {
     name: "PhaseGrouping",
     props: {
         phases: {
             description:
                 "Fases con su respectiva información (videos y cuestionarios)",
-        },
-        pathVideos: {
-            description: "Ruta donde se encuentran los videos",
         },
     },
 
@@ -75,14 +81,9 @@ export default {
                 // El navegador automático elige el mejor comportamiento y comienza a cargar el video inmediatamente (si es compatible con el navegador)
                 fluid: false, // Cuando es verdadero, el reproductor Video.js tendrá un tamaño fluido. En otras palabras,
                 // se escalará proporcionalmente para adaptarse a su contenedor.
-                sources: [
-                    // {
-                    //     src: "http://video.jishiyoo.com/161b9562c780479c95bbdec1a9fbebcc/8d63913b46634b069e13188b03073c09-d25c062412ee3c4a0758b1c48fc8c642-ld.mp4", // camino
-                    //     type: "video/mp4", // Tipos de
-                    // },
-                ],
+                sources: [],
                 // cartel: "../../static/images/test.jpg", // Tu dirección de portada
-                width: document.documentElement.clientWidth,
+                // width: document.documentElement.clientWidth,
                 notSupportedMessage:
                     "Este video no está disponible temporalmente. Vuelve a intentarlo más tarde", // Permitir anular la información predeterminada que se muestra
                 // cuando Video.js no puede reproducir la fuente multimedia.
@@ -96,83 +97,129 @@ export default {
                 },
                 height: "400",
             },
+
+            pathVideos: null,
         };
     },
 
-    mounted() {
+    async mounted() {
+        // path para los videos
+        await this.getPathVideos();
+
+        // ajustar tamaño del video
+        await this.onResize();
+
+        // video a ser mostrado de primero
         const video = this.phase.videos[1];
-        console.log(video);
-        console.log(this.pathVideos);
 
-        // const file = new File([video.data], "video.mp4", {
-        //     type: video.type,
-        // });
-
-        // console.log(file);
-        // console.log(URL.createObjectURL(file));
-        // console.log(`${URL.createObjectURL(file)}.mp4`);
-
-        // const finalVideo = URL.createObjectURL(file).replace('blob:', '') + '.mp4';
-
-        // console.log(finalVideo);
-        // this.$nextTick(() => {
-        //     this.playerOptions.sources = [
-        //         {
-        //             src: "data:video/*;base64," + video.data,
-        //             type: video.type,
-        //         },
-        //     ];
-
-        // });
-
+        // opciones para cargar el video
         this.playerOptions.sources = [
             {
-                src: this.pathVideos + video.data, //'https://www.youtube.com/watch?v=cNqwyLhyVkw&ab_channel=SarahD.Cloutier',
+                src: this.pathVideos + video.data,
                 type: video.type,
             },
         ];
-
-        // this.finalVideo = 'data:video/*;base64,' + video.data;
     },
 
     methods: {
-        // listen event
+        /**
+         * Determinar el tamaño del video según
+         * el tamaño de la pantalla
+         */
+        onResize() {
+            if (window.innerWidth > 500) {
+                this.playerOptions.height = "400";
+            } else {
+                this.playerOptions.height = "200";
+            }
+        },
+        /**
+         * Obtiene la ruta de los videos
+         */
+        async getPathVideos() {
+            await axios.get(route("getPathVideos")).then((response) => {
+                this.pathVideos = response.data;
+            });
+        },
+
+        /**
+         * Evento que se ejecuta cuando el video comienza a reproducirse
+         */
         onPlayerPlay(player) {
-            console.log("player play!", player);
+            console.log("Ha comenzado!", player);
         },
+
+        /**
+         * Evento que se ejecuta cuando el video pausa
+         */
         onPlayerPause(player) {
-            console.log("player pause!", player);
+            console.log("Se ha pausado!", player);
         },
+
+        /**
+         * Evento que se ejecuta cuando el video termina
+         */
         onPlayerEnded(player) {
-            console.log("player ended!", player);
+            console.log("Ha terminado!", player);
         },
-        onPlayerLoadeddata(player) {
-            console.log("player Loadeddata!", player);
-        },
-        onPlayerWaiting(player) {
-            console.log("player Waiting!", player);
-        },
+
+        /**
+         * Evento que se ejecuta cuando el video está en espera
+         */
+        // onPlayerLoadeddata(player) {
+        //     console.log("player Loadeddata!", player);
+        // },
+
+        /**
+         * Evento que se ejecuta cuando el video está en espera
+         */
+        // onPlayerWaiting(player) {
+        //     console.log("player Waiting!", player);
+        // },
+
+        /**
+         * Cuando el video está en reproducción
+         */
         onPlayerPlaying(player) {
-            console.log("player Playing!", player);
+            console.log("Se esta reproduciendo!", player);
         },
+
+        /**
+         * Actualización de tiempo cuando el video está en reproducción
+         */
         onPlayerTimeupdate(player) {
             // console.log('player Timeupdate!', player.currentTime())
-            console.log("player Timeupdate!", player);
+            console.log("Actualizacion de tiempo: ", player.currentTime());
         },
+
+        /**
+         * Cunado el video ha sido adelantado
+         */
         onPlayerCanplay(player) {
-            console.log("player Canplay!", player);
+            console.log("Ha sido adelantado!", player);
         },
+
+        /**
+         * Cuando el video ha sido adelantado y se puede
+         * seguir reproduciendo
+         */
         onPlayerCanplaythrough(player) {
-            console.log("player Canplaythrough!", player);
+            console.log("Se puede seguir viendo!", player);
         },
         // or listen state event
+
+        /**
+         * Evento que se ejecuta mientras el video está en reproducción
+         */
         playerStateChanged(playerCurrentState) {
-            console.log("player current update state", playerCurrentState);
+            console.log("actualización de estado: ", playerCurrentState);
         },
-        // player is ready
+
+        /**
+         * Evento que se ejecuta cuando el video está listo para reproducirse
+         */
         playerReadied(player) {
-            // seek to 10s
-            console.log("example player 1 readied", player);
+            console.log("Listo para ser reproducido", player);
             // player.currentTime(10);
             // player.currentTime(10);
             // console.log('example 01: the player is readied', player)
@@ -193,3 +240,23 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+/* Por debajo de 700px */
+/* @media screen and (max-width: 700px) {
+    .vue_video {
+        height: 300px !important;
+        max-height: 300px !important;
+        padding: 100px;
+    }
+} */
+
+/* Por debajo de 500px */
+/* @media screen and (max-width: 400px) {
+    .vue_video {
+        height: 200px !important;
+        max-height: 200px !important;
+        padding: 150px;
+    }
+} */
+</style>

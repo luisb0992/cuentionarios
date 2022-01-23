@@ -6,8 +6,7 @@
 
     <div id="app" v-cloak>
         <landing title="@lang('Título')" video="@lang('Video')" subtitle="@lang('Sitio exclusivo para socios')"
-            password-placeholder="@lang('Introduce un password...')" :phases="{{ json_encode($phases) }}"
-            path-videos="{{ $path_videos }}" />
+            password-placeholder="@lang('Introduce un password...')" :phases="{{ json_encode($phases) }}" />
     </div>
 @stop
 
