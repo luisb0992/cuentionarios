@@ -95,8 +95,10 @@ export default {
                     remainingTimeDisplay: false,
                     fullscreenToggle: true, // botón de pantalla completa
                 },
-                height: "400",
+                height: "",
             },
+
+            innerWidth: window.innerWidth,
 
             pathVideos: null,
         };
@@ -108,11 +110,12 @@ export default {
 
         // ajustar tamaño del video
         await this.onResize();
+        window.onresize = this.onResize;
 
         // Si existe alguna fase con videos
         if (this.phases.length) {
             // video a ser mostrado de primero
-            const video = this.phase.videos[1];
+            const video = this.phase.videos.filter((video) => video.data)[0];
 
             // opciones para cargar el video
             this.playerOptions.sources = [
@@ -122,17 +125,9 @@ export default {
                 },
             ];
         }
-
     },
 
     methods: {
-        /**
-         * Verificar si la phase es un objeto valido
-         */
-        // isObject(obj) {
-        //     return obj && typeof obj === "object";
-        // },
-
         /**
          * Determinar el tamaño del video según
          * el tamaño de la pantalla
@@ -248,26 +243,6 @@ export default {
         player() {
             return this.$refs.videoPlayer.player;
         },
-    },
+    }
 };
 </script>
-
-<style scoped>
-/* Por debajo de 700px */
-/* @media screen and (max-width: 700px) {
-    .vue_video {
-        height: 300px !important;
-        max-height: 300px !important;
-        padding: 100px;
-    }
-} */
-
-/* Por debajo de 500px */
-/* @media screen and (max-width: 400px) {
-    .vue_video {
-        height: 200px !important;
-        max-height: 200px !important;
-        padding: 150px;
-    }
-} */
-</style>

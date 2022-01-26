@@ -8,7 +8,7 @@
         {{--  textos requeridos para vue  --}}
         <div class="d-none" id="labels" data-phase="@lang('Listado de fases')"
             data-create-phase="@lang('Crear fase')" data-search="@lang('Buscar...')"
-            data-not-found="@lang('Elemento no encontrado')" data-loading="@lang('Buscando, por favor espere...')"
+            data-not-found="@lang('Sin resultados')" data-loading="@lang('Buscando, por favor espere...')"
             data-showing="@lang('Mostrando')" data-to="@lang('a')" data-of="@lang('de')" data-entries="@lang('entradas')"
             data-title="@lang('Título')" data-number="@lang('Fase número')" data-videos="@lang('Videos')"
             data-created="@lang('Creado')" data-updated="@lang('Ultima actualización')" data-actions="@lang('Acciones')"
