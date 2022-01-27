@@ -22,17 +22,18 @@
                                 tabindex="0"
                                 v-tooltip.top="video.name"
                             >
-                                <a
-                                    href="#"
+                                <button
                                     class="list-group-item list-group-item-action list-group-item-primary"
-                                    >{{ "Video " + parseInt(index + 1) }}</a
+                                    @click="loadVideo(video)"
                                 >
+                                    {{ "Video " + parseInt(index + 1) }}
+                                </button>
                             </span>
                         </div>
                     </div>
                 </div>
                 <div class="d-flex justify-content-center mt-3">
-                    <div class="">
+                    <div v-show="loadTypeVideo === 'upload'">
                         <video-player
                             class="vjs-big-play-centered"
                             ref="videoPlayer"
@@ -49,6 +50,15 @@
                             @ready="playerReadied"
                         ></video-player>
                     </div>
+                    <div v-show="loadTypeVideo === 'url'" class="border border-2 border-primary">
+                        <video-embed
+                            :src="urlOptions.src"
+                            ref="urlVideo"
+                            class=""
+                            style="min-height: 400px; min-width: 600px"
+                            allowfullscreen
+                        ></video-embed>
+                    </div>
                 </div>
             </div>
         </div>
@@ -59,6 +69,10 @@
 // directiva del tooltip de primevue
 import Tooltip from "primevue/tooltip";
 Vue.directive("tooltip", Tooltip);
+
+// utilizar el componente de vue para la  reproducción de videos
+import Embed from "v-video-embed";
+Vue.use(Embed);
 
 export default {
     name: "PhaseGrouping",
@@ -71,21 +85,33 @@ export default {
 
     data() {
         return {
+            // opciones de configuración para los videos subidos
             playerOptions: {
-                // Tasas de reproducción: [0.7, 1.0, 1.5, 2.0], // velocidad de reproducción
+                // velocidad de reproducción
                 playbackRates: [0.7, 1.0, 1.5, 2.0],
-                autoplay: false, // Si es verdadero, inicia la reproducción cuando el navegador esté listo.
-                muted: false, // Cualquier audio será eliminado por defecto.
-                loop: false, // Provoca que el video se reinicie tan pronto como termine.
-                preload: "auto", // Se recomienda que el navegador comience a descargar datos de video después de cargar el elemento <video>.
+                // Si es verdadero, inicia la reproducción cuando el navegador esté listo.
+                autoplay: false,
+                // Cualquier audio será eliminado por defecto.
+                muted: false,
+                // Provoca que el video se reinicie tan pronto como termine.
+                loop: false,
+                // Se recomienda que el navegador comience a descargar datos de video después de cargar el elemento <video>.
                 // El navegador automático elige el mejor comportamiento y comienza a cargar el video inmediatamente (si es compatible con el navegador)
-                fluid: false, // Cuando es verdadero, el reproductor Video.js tendrá un tamaño fluido. En otras palabras,
+                preload: "auto",
+                // Cuando es verdadero, el reproductor Video.js tendrá un tamaño fluido. En otras palabras,
                 // se escalará proporcionalmente para adaptarse a su contenedor.
+                fluid: false,
+
+                // recurso de video (src, type)
                 sources: [],
                 // cartel: "../../static/images/test.jpg", // Tu dirección de portada
                 // width: document.documentElement.clientWidth,
+                height: '',
+
+                // Permitir anular la información predeterminada que se muestra
                 notSupportedMessage:
-                    "Este video no está disponible temporalmente. Vuelve a intentarlo más tarde", // Permitir anular la información predeterminada que se muestra
+                    "Este video no está disponible temporalmente. Vuelve a intentarlo más tarde",
+
                 // cuando Video.js no puede reproducir la fuente multimedia.
                 // controlBar: false,
                 controlBar: {
@@ -95,12 +121,18 @@ export default {
                     remainingTimeDisplay: false,
                     fullscreenToggle: true, // botón de pantalla completa
                 },
-                height: "",
             },
 
-            innerWidth: window.innerWidth,
+            // opciones de configuración para los videos por url
+            urlOptions: {
+                src: "",
+            },
 
+            // definir el path donde se encuentran los videos almacenados en la app
             pathVideos: null,
+
+            // definir el tipo de reproducción del video cargado
+            loadTypeVideo: "upload",
         };
     },
 
@@ -108,37 +140,63 @@ export default {
         // path para los videos
         await this.getPathVideos();
 
-        // ajustar tamaño del video
-        await this.onResize();
-        window.onresize = this.onResize;
-
         // Si existe alguna fase con videos
         if (this.phases.length) {
             // video a ser mostrado de primero
-            const video = this.phase.videos.filter((video) => video.data)[0];
+            const video = this.phase.videos[0];
 
-            // opciones para cargar el video
-            this.playerOptions.sources = [
-                {
-                    src: this.pathVideos + video.data,
-                    type: video.type,
-                },
-            ];
+            this.loadVideo(video);
         }
+
+        // ajustar tamaño del video
+        await this.onResize();
+        window.onresize = this.onResize;
     },
 
     methods: {
+        /**
+         * Carga el video para ser visualizado
+         * en el DOM
+         *
+         * @param {Object} video    Video a ser cargado
+         */
+        loadVideo(video) {
+            console.log(video);
+
+            const data = {
+                data: video.data ? this.pathVideos + video.data : video.url,
+                type: video.type ?? "video/mp4",
+            };
+
+            if (video.data) {
+                this.loadTypeVideo = "upload";
+
+                // opciones para cargar el video
+                this.playerOptions.sources = [
+                    {
+                        src: data.data,
+                        type: data.type,
+                    },
+                ];
+            } else {
+                this.loadTypeVideo = "url";
+
+                this.urlOptions.src = data.data;
+            }
+        },
+
         /**
          * Determinar el tamaño del video según
          * el tamaño de la pantalla
          */
         onResize() {
             if (window.innerWidth > 500) {
-                this.playerOptions.height = "400";
+                this.playerOptions.height = "350";
             } else {
-                this.playerOptions.height = "200";
+                this.playerOptions.height = parseInt(window.innerWidth / 1.95);
             }
         },
+
         /**
          * Obtiene la ruta de los videos
          */
@@ -240,9 +298,12 @@ export default {
             return this.phases[0];
         },
 
+        /**
+         * devuelve solo un video de la fase
+         */
         player() {
             return this.$refs.videoPlayer.player;
         },
-    }
+    },
 };
 </script>
