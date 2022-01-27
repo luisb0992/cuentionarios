@@ -546,6 +546,7 @@ export default {
                 .post(route("phases.store"), formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
+                        "Access-Control-Allow-Origin": "*",
                     },
                 })
                 .then((response) => {

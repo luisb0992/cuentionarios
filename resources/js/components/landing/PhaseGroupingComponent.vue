@@ -57,6 +57,7 @@
                             class=""
                             style="min-height: 400px; min-width: 600px"
                             allowfullscreen
+                            @ended="onEnd()"
                         ></video-embed>
                     </div>
                 </div>
@@ -154,6 +155,18 @@ export default {
     },
 
     methods: {
+
+        onEnd() {
+            // si el video terminó, se carga el siguiente
+            // if (this.phase.videos.length > 1) {
+            //     // video a ser mostrado de primero
+            //     const video = this.phase.videos[1];
+
+            //     this.loadVideo(video);
+            // }
+            console.log("el video finalizo");
+        },
+
         /**
          * Carga el video para ser visualizado
          * en el DOM
