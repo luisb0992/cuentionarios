@@ -141,7 +141,7 @@ export default {
         // path para los videos
         await this.getPathVideos();
 
-        console.log("pathVideos", this.pathVideos);
+        console.log(this.pathVideos);
 
         // Si existe alguna fase con videos
         if (this.phases.length) {

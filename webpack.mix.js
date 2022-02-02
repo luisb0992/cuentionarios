@@ -25,9 +25,9 @@ if (mix.inProduction()) {
 // recargar automaticamente con browsersync
 // @see https://browsersync.io/docs/options
 if (!mix.inProduction()) {
-    mix.browserSync({
-        proxy: process.env.MIX_APP_URL,
-    });
+    // mix.browserSync({
+    //     proxy: process.env.MIX_APP_URL,
+    // });
 
     // desactivar notificaciones
     // mix.disableNotifications();
