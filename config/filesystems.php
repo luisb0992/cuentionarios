@@ -76,13 +76,4 @@ return [
     'links' => [
         public_path('storage') => storage_path('app/public'),
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Obtener la ruta absoluta donde se encuentran los videos subidos
-    |--------------------------------------------------------------------------
-    |
-    */
-    'path' => storage_path('app/public') . '/' . config('videos.folder') . '/',
-
 ];
