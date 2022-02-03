@@ -44,9 +44,9 @@ return [
 
         'prod' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
+            'root' => public_path(),
             'url' => env('APP_URL') . '/storage',
-            'visibility' => 'private',
+            'visibility' => 'public',
         ],
 
         's3' => [
