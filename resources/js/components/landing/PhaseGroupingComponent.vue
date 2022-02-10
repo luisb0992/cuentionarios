@@ -50,15 +50,25 @@
                             @ready="playerReadied"
                         ></video-player>
                     </div>
-                    <div v-show="loadTypeVideo === 'url'" class="border border-2 border-primary">
-                        <video-embed
+                    <div
+                        v-show="loadTypeVideo === 'url'"
+                        class="ratio ratio-4x3"
+                    >
+                        <!-- <video-embed
                             :src="urlOptions.src"
                             ref="urlVideo"
                             class=""
                             style="min-height: 400px; min-width: 600px"
                             allowfullscreen
                             @ended="onEnd()"
-                        ></video-embed>
+                        ></video-embed> -->
+                        <iframe
+                            :src="urlOptions.src"
+                            ref="urlVideo"
+                            title="YouTube video"
+                            allowfullscreen
+                            @ended="onEnd()"
+                        ></iframe>
                     </div>
                 </div>
             </div>
@@ -107,7 +117,7 @@ export default {
                 sources: [],
                 // cartel: "../../static/images/test.jpg", // Tu dirección de portada
                 // width: document.documentElement.clientWidth,
-                height: '',
+                height: "",
 
                 // Permitir anular la información predeterminada que se muestra
                 notSupportedMessage:
@@ -141,9 +151,6 @@ export default {
         // path para los videos
         await this.getPathVideos();
 
-        console.log(this.pathVideos);
-        console.log(this.phase);
-
         // Si existe alguna fase con videos
         if (this.phases.length) {
             // video a ser mostrado de primero
@@ -158,7 +165,6 @@ export default {
     },
 
     methods: {
-
         onEnd() {
             // si el video terminó, se carga el siguiente
             // if (this.phase.videos.length > 1) {
@@ -177,7 +183,9 @@ export default {
          * @param {Object} video    Video a ser cargado
          */
         loadVideo(video) {
-            console.log(video);
+            if (!this.pathVideos) {
+                return this.$toast.danger('error al cargar el video');
+            }
 
             const data = {
                 data: video.data ? this.pathVideos + video.data : video.url,
@@ -217,9 +225,12 @@ export default {
          * Obtiene la ruta de los videos
          */
         async getPathVideos() {
-            await axios.get(route("getPathVideos")).then((response) => {
-                this.pathVideos = response.data;
-            });
+            try {
+                const { data } = await axios.get(route("getPathVideos"));
+                this.pathVideos = data;
+            } catch (error) {
+                console.log(error);
+            }
         },
 
         /**

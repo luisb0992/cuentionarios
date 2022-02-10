@@ -1,11 +1,13 @@
 @extends('layouts.main')
 
+@section('subtitle', 'Registro')
+
 @section('content')
     <div class="container">
         <div class="row justify-content-center py-4">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header text-center h2 bg-primary">
+                    <div class="card-header text-center h2 bg-primary text-white">
                         <i class="fas fa-sign-in-alt"></i>
                         {{ __('Registro de usuario') }}
                     </div>

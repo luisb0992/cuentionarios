@@ -17,7 +17,7 @@ class CommonController extends Controller
      */
     public function getPathVideos(): JsonResponse
     {
-        $path = env('APP_URL') . '/storage/' . config('videos.folder') . '/';
+        $path = env('APP_URL') . 'storage/' . config('videos.folder') . '/';
 
         return response()->json($path);
     }

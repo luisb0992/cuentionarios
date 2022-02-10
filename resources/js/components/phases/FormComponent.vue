@@ -557,6 +557,10 @@ export default {
                         this.clearUrlVIdeos();
                         this.clearUploadVideos();
                         this.$toast.success(response.data.message);
+
+                        setTimeout(() => {
+                            location.href = route("phases.index");
+                        }, 700);
                     }
                 })
                 .catch((error) => {

@@ -4,7 +4,7 @@
 
 @section('content')
     <div id="app" v-cloak>
-        <landing title="@lang('Título')" video="@lang('Video')" subtitle="@lang('Sitio exclusivo para socios')"
+        <landing title="@lang('Aprendizaje Gratuito')" video="@lang('Video')" subtitle="@lang('Sitio exclusivo para socios')"
             password-placeholder="@lang('Introduce un password...')" :phases="{{ json_encode($phases) }}" />
     </div>
 @stop
